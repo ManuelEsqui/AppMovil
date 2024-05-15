@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">prueba</string>
+    <string name="no_tienes_cuenta_registrate_aqui">¿No tienes cuenta? Registrate aqui</string>
+    <string name="entrar">Entrar</string>
+    <string name="editar_cuenta">Editar cuenta</string>
 </resources>
