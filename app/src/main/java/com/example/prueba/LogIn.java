@@ -1,8 +1,9 @@
 package com.example.prueba;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,13 +27,34 @@ public class LogIn extends AppCompatActivity {
 
 
     public void registrarUsuario(View view) {
-        TextView prueba= findViewById(R.id.textView);
-        prueba.setText("Funciona xddd");
+        Intent ventana = new Intent(this, ControladorRegistro.class);
+        ventana.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(ventana);
     }
 
     public void editarCuenta(View view) {
+        EditText txtUsuaio=findViewById(R.id.txtUsuario);
+        EditText txtContra=findViewById(R.id.txtContraseña);
+        String usuario=txtUsuaio.getText().toString();
+        String contra=txtContra.getText().toString();
+        if (usuario.isEmpty() || contra.isEmpty()){
+            //mensaje campos no rellenos
+            return;
+        }else{
+            //comprobar que esten el la bd
+        }
     }
 
     public void logIn(View view) {
+        EditText txtUsuaio=findViewById(R.id.txtUsuario);
+        EditText txtContra=findViewById(R.id.txtContraseña);
+        String usuario=txtUsuaio.getText().toString();
+        String contra=txtContra.getText().toString();
+        if (usuario.isEmpty() || contra.isEmpty()){
+            //mensaje campos no rellenos
+            return;
+        }else{
+            //comprobar que esten el la bd
+        }
     }
 }
