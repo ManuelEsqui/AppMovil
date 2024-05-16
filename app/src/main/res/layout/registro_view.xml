@@ -112,6 +112,7 @@
                 android:layout_marginBottom="100px">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Usuario" />
@@ -123,6 +124,7 @@
                 android:layout_marginBottom="100px">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtContraseña"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Contraseña" />
@@ -140,22 +142,24 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnRegistro"
                     android:layout_width="109dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
+                    android:onClick="registrarse"
                     android:text="Registrarse"
                     app:icon="@drawable/baseline_person_add_alt_1_24" />
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btnAtras"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
+                    android:onClick="volverLogin"
                     android:text="Atras"
                     app:icon="@drawable/baseline_arrow_back_ios_24" />
             </LinearLayout>
