@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class ControladorRegistro extends AppCompatActivity {
     EditText txtcontrasena;
     Spinner spLocalidades;
     ArrayList <Localidad> localidades;
+    CheckBox admin;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,8 @@ public class ControladorRegistro extends AppCompatActivity {
         txtusuario=findViewById(R.id.txtUsuario);
         txtcontrasena=findViewById(R.id.txtContraseña);
         spLocalidades=findViewById(R.id.spinner);
+        admin=findViewById(R.id.admin);
+        admin.setVisibility(View.INVISIBLE);
         new SacarLocalidades().execute();
     }
 
@@ -171,7 +175,8 @@ public class ControladorRegistro extends AppCompatActivity {
                     "&estado_civil=" + params[4] +
                     "&usuario=" + params[5] +
                     "&contrasena=" + params[6] +
-                    "&id_localidad=" + params[7];
+                    "&id_localidad=" + params[7] +
+                    "&admin=" + admin.isChecked();
 
             String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/insertarUsuarios.php?"+parametros;
             StringBuilder response = new StringBuilder();
