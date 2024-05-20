@@ -1,9 +1,13 @@
 package com.example.prueba;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,14 +15,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prueba.modelo.Localidad;
+import com.example.prueba.utiles.constantes;
+
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class ControladorRegistro extends AppCompatActivity {
     EditText txtnombre;
@@ -28,6 +33,8 @@ public class ControladorRegistro extends AppCompatActivity {
     EditText txtestadoCivil;
     EditText txtusuario;
     EditText txtcontrasena;
+    Spinner spLocalidades;
+    ArrayList <Localidad> localidades;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +44,17 @@ public class ControladorRegistro extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.registro), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            initComp();
+            try {
+                initComp();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return insets;
         });
     }
 
-    private void initComp() {
+    private void initComp() throws IOException {
+        localidades=new ArrayList<>();
         txtnombre=findViewById(R.id.txtNombre);
         txtapellidos=findViewById(R.id.txtApellidos);
         txtedad=findViewById(R.id.txtEdad);
@@ -50,114 +62,153 @@ public class ControladorRegistro extends AppCompatActivity {
         txtestadoCivil=findViewById(R.id.txtEstadoCivil);
         txtusuario=findViewById(R.id.txtUsuario);
         txtcontrasena=findViewById(R.id.txtContraseña);
+        spLocalidades=findViewById(R.id.spinner);
+        new SacarLocalidades().execute();
+    }
+
+    private void cargarDatosSpinner() {
+        ArrayList <String> nombreLoc=new ArrayList<>();
+        for(Localidad l:localidades){
+            nombreLoc.add(l.getNombre());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nombreLoc);
+        spLocalidades.setAdapter(adapter);
     }
 
     public void registrarse(View vista) throws IOException {
-        //Spinner splocalidad=findViewById(R.id.spinner);
         String nombre=txtnombre.getText().toString();
         String apellidos=txtapellidos.getText().toString();
         int edad=0;
         try {
             edad=Integer.parseInt(txtedad.getText().toString());
         }catch (Exception e){
-            //mesaje error
+            Toast.makeText(this, "Debes introducir un numero en el campo edad", Toast.LENGTH_SHORT).show();
             return;
         }
         String sexo=txtsexo.getText().toString();
         String estadoCivil=txtestadoCivil.getText().toString();
         String usuario=txtusuario.getText().toString();
         String contrasena=txtcontrasena.getText().toString();
-        //String localidad= String.valueOf(splocalidad);//No se si funciona xd
-        //int idLocalidad=sacarIdLocalidad(localidad);
-        int idLocalidad=sacarIdLocalidad("azuaga");
-        if(idLocalidad==-1){
-            //mensaje de que no se encontro la localidad
+        int posicion = spLocalidades.getSelectedItemPosition();
+        Localidad localidad= localidades.get(posicion);
+        if (nombre.isEmpty() || apellidos.isEmpty() || edad==0 || sexo.isEmpty() || estadoCivil.isEmpty() || usuario.isEmpty()){
+            Toast.makeText(this, "Debes introducir todos los campos del registro", Toast.LENGTH_SHORT).show();
             return;
         }
-        txtnombre.setText("funciona");
-        //insertarPersona(nombre, apellidos, edad, sexo, estadoCivil, usuario, contrasena, idLocalidad);
-    }
-
-    private int sacarIdLocalidad(String localidad) throws IOException {
-        //falta por programar
-        int idLocalidad=-1;
-        // Codificar el nombre de la localidad para que pueda ser enviado en la URL
-        String nombreLocalidadEncoded = URLEncoder.encode(localidad, "UTF-8");
-
-        // URL del script PHP con el parámetro del nombre de la localidad
-        String url = "http://localhost/extreventos/sacarIdLocalidades.php?nombre_localidad=" + nombreLocalidadEncoded;
-
-        // Crear conexión
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-
-        // Configurar la conexión
-        con.setRequestMethod("GET");
-
-        // Leer la respuesta
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            //(ID de la localidad)
-            idLocalidad=Integer.parseInt(response.toString());
+        if(contrasena.length()<8){
+            Toast.makeText(this, "La contraseña no es segura", Toast.LENGTH_SHORT).show();
+            return;
         }
-
-        // Cerrar conexión
-        con.disconnect();
-        //xd
-        return idLocalidad;
+        new insertarPersona().execute(nombre, apellidos, edad+"", sexo, estadoCivil, usuario, contrasena, localidad.getId()+"");
     }
 
     public void volverLogin(View vista){
         finish();
     }
-    public static void insertarPersona(String nombre, String apellidos, int edad, String sexo, String estadoCivil,
-                                       String usuario, String contrasena, int idLocalidad) {
-        try {
-            // URL del script PHP
-            URL url = new URL("http://localhost/ExtrEventos/insertarUsuarios.php");
+    private class SacarLocalidades extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            StringBuilder response = new StringBuilder();
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/sacarLocalidades.php";
 
-            // Abrir conexión
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
 
-            // Configurar la conexión
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            con.setDoOutput(true);
+                int responseCode = connection.getResponseCode();
 
-            // Crear parámetros para enviar
-            String parametros = "nombre=" + nombre +
-                    "&apellidos=" + apellidos +
-                    "&edad=" + edad +
-                    "&sexo=" + sexo +
-                    "&estado_civil=" + estadoCivil +
-                    "&usuario=" + usuario +
-                    "&contrasena=" + contrasena +
-                    "&id_localidad=" + idLocalidad;
-
-            // Enviar datos
-            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-                byte[] postData = parametros.getBytes(StandardCharsets.UTF_8);
-                wr.write(postData);
-            }
-
-            // Leer respuesta
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error in server response. Code: ").append(responseCode);
                 }
-                // Imprimir respuesta
-                System.out.println(response.toString());
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Exception: ").append(e.getMessage());
             }
 
-            // Cerrar conexión
-            con.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
+            return response.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (!result.isEmpty()) {
+                // Parse the response and update localidades
+                String[] localidadesArray = result.split("/");
+                for (String localidadStr : localidadesArray) {
+                    String[] idNombre = localidadStr.split("-");
+                    int id = Integer.parseInt(idNombre[0]);
+                    String nombre = idNombre[1];
+                    Localidad localidad = new Localidad(id, nombre);
+                    localidades.add(localidad);
+                }
+
+                // Update the spinner on the UI thread
+                cargarDatosSpinner();
+            } else {
+                Toast.makeText(ControladorRegistro.this, "Error loading localidades", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+    private class insertarPersona extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String parametros = "nombre=" + params[0] +
+                    "&apellidos=" + params[1] +
+                    "&edad=" + params[2] +
+                    "&sexo=" + params[3] +
+                    "&estado_civil=" + params[4] +
+                    "&usuario=" + params[5] +
+                    "&contrasena=" + params[6] +
+                    "&id_localidad=" + params[7];
+
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/insertarUsuarios.php?"+parametros;
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                        Toast.makeText(ControladorRegistro.this, "Usuario introducido correctamente", Toast.LENGTH_LONG).show();
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            finish();
         }
     }
 }

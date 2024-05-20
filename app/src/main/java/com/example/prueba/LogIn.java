@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,10 +52,10 @@ public class LogIn extends AppCompatActivity {
         String usuario=txtUsuaio.getText().toString();
         String contra=txtContra.getText().toString();
         if (usuario.isEmpty() || contra.isEmpty()){
-            //mensaje campos no rellenos
+            Toast.makeText(this, "Debes rellenar todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }else{
-            //comprobar que esten el la bd
+
         }
     }
 }
