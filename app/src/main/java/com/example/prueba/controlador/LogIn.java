@@ -1,4 +1,4 @@
-package com.example.prueba;
+package com.example.prueba.controlador;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prueba.R;
 import com.example.prueba.utiles.constantes;
 
 import java.io.BufferedReader;
@@ -97,6 +98,9 @@ public class LogIn extends AppCompatActivity {
             //Toast.makeText(LogIn.this, result, Toast.LENGTH_SHORT).show();
             if (result.equals("[{\"admin\":0}]")){
                 Toast.makeText(LogIn.this, "Pa la ventana de usuarios", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LogIn.this, ControladorVistaUsuarios.class);
+                intent.putExtra("user", usuario);
+                startActivity(intent);
 
             } else if (result.equals("[{\"admin\":1}]")) {
                 Toast.makeText(LogIn.this, "Pa la ventana de admins", Toast.LENGTH_SHORT).show();

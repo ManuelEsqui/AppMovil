@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Registrate en la app"
+                    android:text="Edita tu cuenta"
                     android:textAlignment="center"
                     android:textColor="#012B59"
                     android:textSize="34sp"
@@ -156,9 +156,10 @@
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
+                    android:backgroundTint="@android:color/holo_green_dark"
                     android:onClick="registrarse"
-                    android:text="Registrarse"
-                    app:icon="@drawable/baseline_person_add_alt_1_24" />
+                    android:text="Aceptar"
+                    app:icon="@drawable/baseline_edit_10" />
 
                 <Button
                     android:id="@+id/btnAtras"
@@ -167,10 +168,22 @@
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
+                    android:backgroundTint="@android:color/system_on_primary_dark"
                     android:onClick="volverLogin"
                     android:text="Atras"
                     app:icon="@drawable/baseline_arrow_back_ios_24" />
+
             </LinearLayout>
+
+            <Button
+                android:id="@+id/eliminar"
+                android:layout_width="178dp"
+                android:layout_height="45dp"
+                android:layout_marginHorizontal="307px"
+                android:layout_weight="1"
+                android:backgroundTint="@color/design_default_color_error"
+                android:text="Eliminar"
+                app:icon="@drawable/baseline_delete_outline_24" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

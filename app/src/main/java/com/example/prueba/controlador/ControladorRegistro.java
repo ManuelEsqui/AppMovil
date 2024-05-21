@@ -1,4 +1,4 @@
-package com.example.prueba;
+package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.prueba.R;
 import com.example.prueba.modelo.Localidad;
 import com.example.prueba.utiles.constantes;
 
@@ -34,16 +35,18 @@ public class ControladorRegistro extends AppCompatActivity {
     EditText txtestadoCivil;
     EditText txtusuario;
     EditText txtcontrasena;
+
     Spinner spLocalidades;
     ArrayList <Localidad> localidades;
     CheckBox admin;
+    String user;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.registro_view);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.registro), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edicionDatos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             try {

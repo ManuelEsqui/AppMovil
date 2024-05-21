@@ -8,7 +8,7 @@
     android:rotation="0"
     android:rotationX="0"
     android:rotationY="0"
-    tools:context=".LogIn">
+    tools:context=".controlador.LogIn">
 
     <TextView
         android:id="@+id/textView"
