@@ -198,7 +198,6 @@ public class ControladorRegistro extends AppCompatActivity {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
-                        Toast.makeText(ControladorRegistro.this, "Usuario introducido correctamente", Toast.LENGTH_LONG).show();
                     }
                     reader.close();
                 } else {
@@ -216,7 +215,13 @@ public class ControladorRegistro extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
-            finish();
+            if (result.equals("Nuevo registro insertado correctamente.")){
+                Toast.makeText(ControladorRegistro.this, result, Toast.LENGTH_SHORT).show();
+                finish();
+            }else {
+                Toast.makeText(ControladorRegistro.this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 }

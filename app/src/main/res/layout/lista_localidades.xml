@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listaLocalidades"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="#1BB0BD">
+
+    <ListView
+        android:id="@+id/listViewLocalidades"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/volver">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/volver"
+        android:layout_width="43dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="7dp"
+        android:backgroundTint="#00FF0E0E"
+        android:onClick="volverMenuUsuarios"
+        app:icon="@drawable/baseline_arrow_back_ios_24"
+        app:iconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/listViewLocalidades"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

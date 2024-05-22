@@ -9,13 +9,6 @@ public class Evento {
     private Date fecha;
 
 
-    public Evento(String nombre, String descripcion, String localidad, String ubicacion, Date fecha) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.fecha = fecha;
-        this.localidad=localidad;
-        this.ubicacion=ubicacion;
-    }
     public Evento(int id,String nombre, String descripcion, String localidad, String ubicacion, Date fecha) {
         this.id = id;
         this.nombre = nombre;
@@ -25,10 +18,6 @@ public class Evento {
         this.ubicacion=ubicacion;
     }
 
-    public Evento(int id, String nombre) {
-        this.id = id;
-        this.nombre = nombre;
-    }
 
     public void setId(int id) {
         this.id = id;

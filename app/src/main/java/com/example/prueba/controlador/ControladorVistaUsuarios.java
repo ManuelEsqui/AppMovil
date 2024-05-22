@@ -46,7 +46,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
         setContentView(R.layout.user_view);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        new extraerEventos().execute();
+        new extraerEventos().execute("extraerEventos.php");
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.usuariosView), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -82,8 +82,8 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu) {
+            System.out.println(user);
             Intent intent = new Intent(this, ControladorEdicionDatos.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("user", user);
             startActivity(intent);
             return true;
@@ -91,10 +91,12 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             // Listado de localidades
             return true;
         } else if (id == R.id.menu3) {
-            // Eventos de pago
+            arrayEventos.clear();
+            new extraerEventos().execute("mostrarEventosPago.php");
             return true;
         } else if (id == R.id.menu4) {
-            // Eventos gratis
+            arrayEventos.clear();
+            new extraerEventos().execute("mostrarEventosGratis.php");
             return true;
         }else if (id == R.id.menu5) {
             // Mis eventos
@@ -106,20 +108,21 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class extraerEventos extends AsyncTask<Void, Void, String> {
-
+    private class extraerEventos extends AsyncTask<String, Void, String> {
+        ProgressDialog progreso;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Inicializar y mostrar el ProgressDialog
-            ProgressDialog progreso= new ProgressDialog(ControladorVistaUsuarios.this);
+            progreso= new ProgressDialog(ControladorVistaUsuarios.this);
             progreso.setMessage("Cargando datos...");
             progreso.show();
         }
         @Override
-        protected String doInBackground(Void... voids) {
+        protected String doInBackground(String... params) {
             StringBuilder response = new StringBuilder();
-            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/extraerEventos.php";
+            //String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/extraerEventos.php";
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/"+params[0];
 
             try {
                 URL url = new URL(requestURL);
@@ -173,11 +176,19 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
                     arrayEventos.add(e);
                     arrDatos =llenarArraylistString();
                     initDatos();
+                    progreso.dismiss();
                 }
             } else {
                 Toast.makeText(ControladorVistaUsuarios.this, "Error cargando los eventos", Toast.LENGTH_LONG).show();
             }
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(ControladorVistaUsuarios.this, LogIn.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 

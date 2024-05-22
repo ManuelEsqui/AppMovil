@@ -1,12 +1,22 @@
 package com.example.prueba.modelo;
 
+import android.media.Image;
+
 public class Localidad {
     private int id;
     private String nombre, provincia;
+    private Image image;
 
     public Localidad(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
+    }
+
+    public Localidad(int id, String nombre, String provincia, Image image) {
+        this.id = id;
+        this.nombre = nombre;
+        this.provincia = provincia;
+        this.image = image;
     }
 
     public int getId() {
@@ -31,5 +41,11 @@ public class Localidad {
 
     public void setProvincia(String provincia) {
         this.provincia = provincia;
+    }
+    public Image getImage() {
+        return image;
+    }
+    public void setImage(Image image) {
+        this.image = image;
     }
 }

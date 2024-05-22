@@ -1,6 +1,8 @@
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prueba.R;
 import com.example.prueba.modelo.Localidad;
+import com.example.prueba.modelo.Usuario;
 import com.example.prueba.utiles.constantes;
 
 import org.json.JSONArray;
@@ -45,6 +48,11 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         if (extras!=null){
             user=extras.getString("user");
         }
+        try {
+            initComp();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edicionDatos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -61,6 +69,8 @@ public class ControladorEdicionDatos extends AppCompatActivity {
     Spinner spLocalidades;
     ArrayList<Localidad> localidades;
     CheckBox admin;
+    Usuario usuario;
+    int localidad_id;
     private void initComp() throws IOException {
         localidades=new ArrayList<>();
         txtnombre=findViewById(R.id.txtNombre);
@@ -74,6 +84,10 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         admin=findViewById(R.id.admin);
         admin.setVisibility(View.INVISIBLE);
         new SacarLocalidades().execute();
+    }
+
+    public void deleteAccount(View view) {
+        new DeleteUsuarioAsyncTask().execute();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -122,9 +136,9 @@ public class ControladorEdicionDatos extends AppCompatActivity {
                     Localidad localidad = new Localidad(id, nombre);
                     localidades.add(localidad);
                 }
-
                 // Update the spinner on the UI thread
                 cargarDatosSpinner();
+                new SacarPersonas().execute();
             } else {
                 Toast.makeText(ControladorEdicionDatos.this, "Error loading localidades", Toast.LENGTH_LONG).show();
             }
@@ -138,12 +152,34 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nombreLoc);
         spLocalidades.setAdapter(adapter);
-        //posicion por defecto
     }
-    public void registrarse(View vista) throws IOException {
+
+    private void rellenarCampos() {
+        txtnombre.setText(usuario.getNombre());
+        txtapellidos.setText(usuario.getApellidos());
+        txtedad.setText(usuario.getEdad()+"");
+        txtsexo.setText(usuario.getSexo());
+        txtestadoCivil.setText(usuario.getEstadoCivil());
+        txtusuario.setText(usuario.getUser());
+        txtcontrasena.setText(usuario.getPasswrd());
+        if (usuario.isAdmin()){
+            admin.setVisibility(View.VISIBLE);
+            admin.setChecked(true);
+        }
+        //rellenar los datos del spinner
+        int i=0;
+        for (Localidad l: localidades) {
+            if (l.getId()==localidad_id){
+                spLocalidades.setSelection(i);
+            }
+            i++;
+        }
+    }
+
+    public void editDatos(View vista) throws IOException {
         String nombre=txtnombre.getText().toString();
         String apellidos=txtapellidos.getText().toString();
-        int edad=0;
+        int edad;
         try {
             edad=Integer.parseInt(txtedad.getText().toString());
         }catch (Exception e){
@@ -166,10 +202,12 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
         new editarPersona().execute(nombre, apellidos, edad+"", sexo, estadoCivil, usuario, contrasena, localidad.getId()+"");
     }
+    @SuppressLint("StaticFieldLeak")
     private class editarPersona extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
+            System.out.println(user);
             String parametros = "nombre=" + params[0] +
                     "&apellidos=" + params[1] +
                     "&edad=" + params[2] +
@@ -178,7 +216,8 @@ public class ControladorEdicionDatos extends AppCompatActivity {
                     "&usuario=" + params[5] +
                     "&contrasena=" + params[6] +
                     "&id_localidad=" + params[7] +
-                    "&admin=" + admin.isChecked();
+                    "&admin=" + admin.isChecked() +
+                    "&usuarioActualizar=" + user;
 
             String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/editarUsuarios.php?"+parametros;
             StringBuilder response = new StringBuilder();
@@ -197,7 +236,6 @@ public class ControladorEdicionDatos extends AppCompatActivity {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         response.append(line);
-                        Toast.makeText(ControladorEdicionDatos.this, "Usuario editado correctamente", Toast.LENGTH_LONG).show();
                     }
                     reader.close();
                 } else {
@@ -215,14 +253,27 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
+            Toast.makeText(ControladorEdicionDatos.this, "Usuario editado correctamente", Toast.LENGTH_SHORT).show();
+            //Intent intent = new Intent(ControladorEdicionDatos.this, ControladorEdicionDatos.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //intent.putExtra("user", txtusuario.getText().toString());
             finish();
         }
     }
-    private class SacarPersonas extends AsyncTask<String, Void, String> {
+    private class SacarPersonas extends AsyncTask<Void, Void, String> {
+        ProgressDialog progreso;
         @Override
-        protected String doInBackground(String... params) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Inicializar y mostrar el ProgressDialog
+            progreso= new ProgressDialog(ControladorEdicionDatos.this);
+            progreso.setMessage("Cargando datos...");
+            progreso.show();
+        }
+        @Override
+        protected String doInBackground(Void... Voids) {
             StringBuilder response = new StringBuilder();
-            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/extraerPersona.php?user="+params[0];
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/extraerPersona.php?user="+user;
 
             try {
                 URL url = new URL(requestURL);
@@ -253,17 +304,33 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
+            System.out.println(result);
             if (!result.isEmpty()) {
-                JSONObject jsonResponse = null;
+                JSONObject jsonResponse;
                 try {
                     jsonResponse = new JSONObject(result);
-                    if (jsonResponse.getString("status").equals("success")) {
-                        JSONArray data = jsonResponse.getJSONArray("data");
-                        for (int i = 0; i < data.length(); i++) {
-                            JSONObject clienteJson = data.getJSONObject(i);
-                            String nombre=clienteJson.getString("nombre");//Falta por terminar
-                        }
-                    }
+                    String nombre;
+                    String apellidos="";
+                    String sexo="";
+                    String estadoCivil="";
+                    String nickname="";
+                    String passwrd="";
+                    int edad=-1;
+                    int intAdmin=0;
+                    boolean admin=false;
+                            nombre=jsonResponse.getString("nombre");
+                            if (jsonResponse.has("apellidos"))apellidos=jsonResponse.getString("apellidos");
+                            if (jsonResponse.has("sexo"))sexo=jsonResponse.getString("sexo");
+                            if (jsonResponse.has("estadoCivil"))estadoCivil=jsonResponse.getString("estadoCivil");
+                            if (jsonResponse.has("user"))nickname=jsonResponse.getString("user");
+                            if (jsonResponse.has("passwrd"))passwrd=jsonResponse.getString("passwrd");
+                            if (jsonResponse.has("edad"))edad=jsonResponse.getInt("edad");
+                            if (jsonResponse.has("admin"))intAdmin= jsonResponse.getInt("admin");
+                            if (jsonResponse.has("localidad_id"))localidad_id= jsonResponse.getInt("localidad_id");
+                            if (intAdmin==1) admin=true;
+                            usuario=new Usuario(nombre, apellidos, sexo, estadoCivil, nickname, passwrd, edad, admin);
+                            rellenarCampos();
+                            progreso.dismiss();
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -271,6 +338,53 @@ public class ControladorEdicionDatos extends AppCompatActivity {
                 Toast.makeText(ControladorEdicionDatos.this, "Error cargando el usuario", Toast.LENGTH_LONG).show();
             }
         }
+    }
+    @SuppressLint("StaticFieldLeak")
+    private class DeleteUsuarioAsyncTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/eliminar_usuario.php?usuario=" + user;
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Leer la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ControladorEdicionDatos.this, result, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(ControladorEdicionDatos.this, LogIn.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+
+
     }
 
 }

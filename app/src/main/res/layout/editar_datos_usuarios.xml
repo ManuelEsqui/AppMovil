@@ -157,7 +157,7 @@
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/holo_green_dark"
-                    android:onClick="registrarse"
+                    android:onClick="editDatos"
                     android:text="Aceptar"
                     app:icon="@drawable/baseline_edit_10" />
 
@@ -168,7 +168,6 @@
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
-                    android:backgroundTint="@android:color/system_on_primary_dark"
                     android:onClick="volverLogin"
                     android:text="Atras"
                     app:icon="@drawable/baseline_arrow_back_ios_24" />
@@ -182,6 +181,7 @@
                 android:layout_marginHorizontal="307px"
                 android:layout_weight="1"
                 android:backgroundTint="@color/design_default_color_error"
+                android:onClick="deleteAccount"
                 android:text="Eliminar"
                 app:icon="@drawable/baseline_delete_outline_24" />
         </LinearLayout>
