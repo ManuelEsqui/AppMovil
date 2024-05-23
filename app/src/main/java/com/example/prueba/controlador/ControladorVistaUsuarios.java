@@ -71,7 +71,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
     private ArrayList<String> llenarArraylistString() {
         ArrayList<String> data= new ArrayList<>();
         for (Evento e:arrayEventos) {
-            data.add(e.getNombre());
+            data.add(e.getNombre()+"  -  "+e.getLocalidad());
         }
         return data;
     }
@@ -181,12 +181,12 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
                     arrDatos =llenarArraylistString();
                     initDatos();
                     progreso.dismiss();
-                    listaEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Evento ev =arrayEventos.get(position);
-                            Toast.makeText(ControladorVistaUsuarios.this, ev.toString(), Toast.LENGTH_SHORT).show();
-                        }
+                    listaEventos.setOnItemClickListener((parent, view, position, id1) -> {
+                        Evento ev =arrayEventos.get(position);
+                        Intent i=new Intent(ControladorVistaUsuarios.this, ControladorDatosEventos.class);
+                        i.putExtra("user", user);
+                        i.putExtra("evento", ev);
+                        startActivity(i);
                     });
                 }
             } else {
