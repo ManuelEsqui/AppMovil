@@ -2,7 +2,9 @@ package com.example.prueba.modelo;
 
 import androidx.annotation.NonNull;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
     private String nombre,apellidos,sexo,estadoCivil,user,passwrd;
     private int edad;
     private boolean admin;

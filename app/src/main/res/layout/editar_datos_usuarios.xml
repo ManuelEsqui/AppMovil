@@ -168,9 +168,10 @@
                     android:layout_marginLeft="30px"
                     android:layout_marginRight="30px"
                     android:layout_weight="1"
-                    android:onClick="volverLogin"
+                    android:onClick="volverVentanaUsuarios"
                     android:text="Atras"
-                    app:icon="@drawable/baseline_arrow_back_ios_24" />
+                    app:icon="@drawable/baseline_arrow_back_ios_24"
+                    tools:ignore="OnClick" />
 
             </LinearLayout>
 

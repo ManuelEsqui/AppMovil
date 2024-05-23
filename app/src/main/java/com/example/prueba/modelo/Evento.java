@@ -1,8 +1,9 @@
 package com.example.prueba.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Evento {
+public class Evento implements Serializable {
     private int id;
     private String nombre,descripcion;
     private String localidad, ubicacion;

@@ -1,18 +1,20 @@
 package com.example.prueba.modelo;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
-public class Localidad {
+import java.io.Serializable;
+
+public class Localidad implements Serializable {
     private int id;
     private String nombre, provincia;
-    private Image image;
+    private byte[] image;
 
     public Localidad(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
 
-    public Localidad(int id, String nombre, String provincia, Image image) {
+    public Localidad(int id, String nombre, String provincia, byte[] image) {
         this.id = id;
         this.nombre = nombre;
         this.provincia = provincia;
@@ -42,10 +44,20 @@ public class Localidad {
     public void setProvincia(String provincia) {
         this.provincia = provincia;
     }
-    public Image getImage() {
+    public byte[] getImage() {
         return image;
     }
-    public void setImage(Image image) {
+    public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Localidad{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", provincia='" + provincia + '\'' +
+                ", image=" + image +
+                '}';
     }
 }

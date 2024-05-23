@@ -90,6 +90,13 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         new DeleteUsuarioAsyncTask().execute();
     }
 
+    public void volverVentanaUsuarios(View view) {
+        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user", txtusuario.getText().toString());
+        startActivity(intent);
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class SacarLocalidades extends AsyncTask<Void, Void, String> {
         @Override
@@ -254,10 +261,10 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ControladorEdicionDatos.this, "Usuario editado correctamente", Toast.LENGTH_SHORT).show();
-            //Intent intent = new Intent(ControladorEdicionDatos.this, ControladorEdicionDatos.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //intent.putExtra("user", txtusuario.getText().toString());
-            finish();
+            Intent intent = new Intent(ControladorEdicionDatos.this, ControladorEdicionDatos.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("user", txtusuario.getText().toString());
+            startActivity(intent);
         }
     }
     private class SacarPersonas extends AsyncTask<Void, Void, String> {

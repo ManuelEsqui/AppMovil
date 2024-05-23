@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prueba.R;
 import com.example.prueba.modelo.Evento;
+import com.example.prueba.modelo.Localidad;
 import com.example.prueba.utiles.constantes;
 
 import java.io.BufferedReader;
@@ -88,7 +91,8 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.menu2) {
-            // Listado de localidades
+            Intent intent=new Intent(this, listaLocalidades.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.menu3) {
             arrayEventos.clear();
@@ -177,6 +181,13 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
                     arrDatos =llenarArraylistString();
                     initDatos();
                     progreso.dismiss();
+                    listaEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Evento ev =arrayEventos.get(position);
+                            Toast.makeText(ControladorVistaUsuarios.this, ev.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             } else {
                 Toast.makeText(ControladorVistaUsuarios.this, "Error cargando los eventos", Toast.LENGTH_LONG).show();

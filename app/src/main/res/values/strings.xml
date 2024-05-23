@@ -4,4 +4,7 @@
     <string name="entrar">Entrar</string>
     <string name="editar_cuenta">Editar cuenta</string>
     <string name="nombre">Nombre</string>
+    <string name="provincia">Provincia</string>
+    <string name="imagen">Imagen</string>
+    <string name="mapa">Mapa</string>
 </resources>
