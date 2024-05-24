@@ -103,7 +103,9 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             new extraerEventos().execute("mostrarEventosGratis.php");
             return true;
         }else if (id == R.id.menu5) {
-            // Mis eventos
+            Intent i=new Intent(this, ControladorMisEventos.class);
+            i.putExtra("user", user);
+            startActivity(i);
             return true;
         }else if (id == R.id.menu6) {
             finish();//cierra la sesión
