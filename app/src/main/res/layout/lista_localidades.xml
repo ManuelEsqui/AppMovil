@@ -5,7 +5,8 @@
     android:id="@+id/listaLocalidades"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#1BB0BD">
+    android:background="#A63E3E"
+    android:backgroundTint="#D9F1D6">
 
     <ListView
         android:id="@+id/listViewLocalidades"

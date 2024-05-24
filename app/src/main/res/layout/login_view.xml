@@ -5,6 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#A33535"
+    android:backgroundTint="#E3F3DA"
     android:rotation="0"
     android:rotationX="0"
     android:rotationY="0"

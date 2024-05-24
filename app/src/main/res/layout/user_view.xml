@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/usuariosView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#CA3737"
+    android:backgroundTint="#E1F8D4">
 
     <ListView
         android:id="@+id/listViewEventos"

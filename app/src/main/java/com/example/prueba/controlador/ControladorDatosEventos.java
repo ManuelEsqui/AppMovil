@@ -1,11 +1,13 @@
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,12 +23,18 @@ import com.example.prueba.utiles.constantes;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;;
 
 public class ControladorDatosEventos extends AppCompatActivity {
 
     String user;
     Evento evento;
+    EditText txtNombre, txtLocalidad, txtUbicacion, txtFecha, txtPrecioTipo, txtPuntoVenta;
+    TextView txtdescripcion, txtDescAdicional;
+    TextView puntoVenta, precioTipo, descripcionAdicional;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -34,6 +42,7 @@ public class ControladorDatosEventos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.info_de_eventos);
+        init();
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
             user=extras.getString("user");
@@ -46,20 +55,82 @@ public class ControladorDatosEventos extends AppCompatActivity {
             return insets;
         });
     }
-    private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis){
-        Toast.makeText(this, user+" "+eventoGratis.getId(), Toast.LENGTH_SHORT).show();
+    private void init(){
+        txtNombre=findViewById(R.id.txtNombreEv);
+        txtLocalidad=findViewById(R.id.txtLocalidadEv);
+        txtUbicacion=findViewById(R.id.txtUbicacionEv);
+        txtFecha=findViewById(R.id.txtFechaEv);
+        txtPrecioTipo=findViewById(R.id.txtPrecioTipo);
+        txtPuntoVenta=findViewById(R.id.editTextText6);
+        txtDescAdicional=findViewById(R.id.txtDescAdicional);
+        txtdescripcion=findViewById(R.id.txtDescripcion);
+        puntoVenta=findViewById(R.id.tvPuntoVenta);
+        precioTipo=findViewById(R.id.textViewPrecioTipo);
+        descripcionAdicional=findViewById(R.id.tvDescAdicional);
     }
+    @SuppressLint("SetTextI18n")
+    private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis){
+        System.out.println(eventoGratis.toString());
+        //Se hacen invisible los componentes no necesarios
+        txtPuntoVenta.setVisibility(View.INVISIBLE);
+        puntoVenta.setVisibility(View.INVISIBLE);
+        //se rellena el resto
+        txtNombre.setText(eventoGratis.getNombre());
+        txtLocalidad.setText(eventoGratis.getLocalidad());
+        txtUbicacion.setText(eventoGratis.getUbicacion());
+        String pattern = "MM/dd/yyyy";
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
+        String fecha=df.format(eventoGratis.getFecha());
+        txtFecha.setText(fecha);
+        txtdescripcion.setText(eventoGratis.getDescripcion());
+        precioTipo.setText("Tipo");
+        txtPrecioTipo.setText(eventoGratis.getTipo());
+        txtDescAdicional.setText(eventoGratis.getDescripcionAdicional());
+    }
+
+    public void atras(View v){
+        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
+        intent.putExtra("user", user);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+    @SuppressLint("SetTextI18n")
     private void rellenarDatosEventoPago(Evento_Pago eventoPago){
-        Toast.makeText(this, user+" "+eventoPago.getId(), Toast.LENGTH_SHORT).show();
+        System.out.println(eventoPago.toString());
+        //Invisible componentes no necesarios
+        descripcionAdicional.setVisibility(View.INVISIBLE);
+        txtDescAdicional.setVisibility(View.INVISIBLE);
+        //Se rellena
+        txtNombre.setText(eventoPago.getNombre());
+        txtLocalidad.setText(eventoPago.getLocalidad());
+        txtUbicacion.setText(eventoPago.getUbicacion());
+        String pattern = "MM/dd/yyyy";
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
+        String fecha=df.format(eventoPago.getFecha());
+        txtFecha.setText(fecha);
+        txtdescripcion.setText(eventoPago.getDescripcion());
+        txtPrecioTipo.setText(eventoPago.getPrecio()+"");
+        precioTipo.setText("Precio");
+        txtPuntoVenta.setText(eventoPago.getPuntoDeVenta());
     }
 
 
 
 
     private class ObtenerEventoCompletoAsyncTask extends AsyncTask<Void, Void, String> {
+        ProgressDialog progreso;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Inicializar y mostrar el ProgressDialog
+            progreso= new ProgressDialog(ControladorDatosEventos.this);
+            progreso.setMessage("Cargando datos...");
+            progreso.setCancelable(false);//no se puede cancelar
+            progreso.show();
+        }
         @Override
         protected String doInBackground(Void... params) {
-            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/obtenerEventoCompleto.php";
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/obtenerEventoCompleto.php?id="+evento.getId();
             StringBuilder response = new StringBuilder();
 
             try {
@@ -105,8 +176,10 @@ public class ControladorDatosEventos extends AppCompatActivity {
                 }catch (Exception e){
                     String tipo=datosArray[0];
                     String descripcionAdicional=datosArray[1];
-                    Evento_Gratis eventoGratis=new Evento_Gratis(evento, tipo, descripcionAdicional);
+                    Evento_Gratis eventoGratis=new Evento_Gratis(evento, descripcionAdicional, tipo);
                     rellenarDatosEventoGratis(eventoGratis);
+                }finally {
+                    progreso.dismiss();
                 }
             }else{
                 Toast.makeText(ControladorDatosEventos.this, "No se han econtrado los datos", Toast.LENGTH_SHORT).show();
