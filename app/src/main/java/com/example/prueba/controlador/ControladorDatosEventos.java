@@ -89,11 +89,16 @@ public class ControladorDatosEventos extends AppCompatActivity {
     }
 
     public void atras(View v){
+        volverAtras();
+    }
+
+    private void volverAtras() {
         Intent intent = new Intent(this, ControladorVistaUsuarios.class);
         intent.putExtra("user", user);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
     @SuppressLint("SetTextI18n")
     private void rellenarDatosEventoPago(Evento_Pago eventoPago){
         System.out.println(eventoPago.toString());
@@ -114,7 +119,9 @@ public class ControladorDatosEventos extends AppCompatActivity {
         txtPuntoVenta.setText(eventoPago.getPuntoDeVenta());
     }
 
-
+    public void apuntarse(View view) {
+        new ApuntarseAsyncTask().execute();
+    }
 
 
     private class ObtenerEventoCompletoAsyncTask extends AsyncTask<Void, Void, String> {
@@ -186,5 +193,50 @@ public class ControladorDatosEventos extends AppCompatActivity {
             }
 
         }
+    }
+    private class ApuntarseAsyncTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/apuntarseEventos.php?usuario=" + user+"&id_evento="+evento.getId();
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Leer la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            System.out.println(result);
+            Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
+            volverAtras();
+        }
+
+
     }
 }

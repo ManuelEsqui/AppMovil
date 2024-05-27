@@ -92,6 +92,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             return true;
         } else if (id == R.id.menu2) {
             Intent intent=new Intent(this, listaLocalidades.class);
+            intent.putExtra("user", user);
             startActivity(intent);
             return true;
         } else if (id == R.id.menu3) {

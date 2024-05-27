@@ -19,6 +19,10 @@ public class Evento implements Serializable {
         this.ubicacion=ubicacion;
     }
 
+    public Evento(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 
     public void setId(int id) {
         this.id = id;

@@ -11,8 +11,8 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
-        android:layout_width="799dp"
-        android:layout_height="67dp"
+        android:layout_width="407dp"
+        android:layout_height="60dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -24,6 +24,7 @@ public class ControladorDatosLocalidades extends AppCompatActivity {
     EditText txtNombre;
     EditText txtProvincia;
     ImageView imagen;
+    String user;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -33,6 +34,7 @@ public class ControladorDatosLocalidades extends AppCompatActivity {
         setContentView(R.layout.datos_de_localidades);
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
+            user=extras.getString("user");
             localidad=(Localidad) extras.get("localidad");
         }
         init();
@@ -61,6 +63,7 @@ public class ControladorDatosLocalidades extends AppCompatActivity {
     public void volverInicio(View view){
         Intent intent = new Intent(this, ControladorVistaUsuarios.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 }

@@ -36,17 +36,20 @@ public class listaLocalidades extends AppCompatActivity {
     ArrayList<Localidad> Arraylocalidades=new ArrayList<>();
     ArrayList<String> ArrayNombreLoc;
     ListView listViewLocalidades;
+    String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.lista_localidades);
+        Bundle extras=getIntent().getExtras();
+        if (extras!=null){
+            user=extras.getString("user");
+        }
         new ObtenerLocalidadesAsyncTask().execute();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.listaLocalidades), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-
-
             return insets;
         });
     }
@@ -124,6 +127,7 @@ public class listaLocalidades extends AppCompatActivity {
                         Localidad loc =Arraylocalidades.get(position);
                         Intent intent=new Intent(listaLocalidades.this, ControladorDatosLocalidades.class);
                         intent.putExtra("localidad", loc);
+                        intent.putExtra("user", user);
                         startActivity(intent);
                     }
                 });

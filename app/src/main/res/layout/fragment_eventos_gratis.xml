@@ -21,10 +21,13 @@
         tools:ignore="MissingConstraints" />
 
     <ListView
+        android:id="@+id/listaEventosGratis"
         android:layout_width="411dp"
         android:layout_height="669dp"
+        android:layout_marginTop="13dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewGratis" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -57,6 +57,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="80px"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="@string/nombre"
@@ -77,6 +78,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="80px"
                 android:backgroundTint="#022150"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="Localidad"
@@ -96,6 +98,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="80px"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="Ubicacion"
@@ -115,6 +118,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="80px"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="Fecha"
@@ -152,6 +156,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="80px"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="Precio/Tipo"
@@ -162,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
-                android:text="Punto de venta" />
+                android:text="Punto de venta de entrada" />
 
             <TextView
                 android:id="@+id/tvDescAdicional"
@@ -177,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:editable="false"
                 android:ems="10"
                 android:inputType="none"
                 android:text="Punto de ventas"
