@@ -123,6 +123,13 @@ public class ControladorDatosEventos extends AppCompatActivity {
         new ApuntarseAsyncTask().execute();
     }
 
+    public void asistenciaEvento(View view) {
+        Intent intent=new Intent(this, ControladorAsistentes.class);
+        intent.putExtra("idEvento", evento.getId());
+        intent.putExtra("user", user);
+        startActivity(intent);
+    }
+
 
     private class ObtenerEventoCompletoAsyncTask extends AsyncTask<Void, Void, String> {
         ProgressDialog progreso;

@@ -1,7 +1,9 @@
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -109,7 +111,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             startActivity(i);
             return true;
         }else if (id == R.id.menu6) {
-            finish();//cierra la sesión
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -200,10 +202,8 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(ControladorVistaUsuarios.this, LogIn.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+                Intent intent = new Intent(ControladorVistaUsuarios.this, LogIn.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
     }
-
-
 }

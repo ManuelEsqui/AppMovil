@@ -194,10 +194,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="85px"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                 android:textAlignment="textStart"
                 android:textColor="#000000"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="300px"
+                android:layout_marginRight="300px"
+                android:backgroundTint="#AA0281"
+                android:backgroundTintMode="src_in"
+                android:onClick="asistenciaEvento"
+                android:text="ver asistencia"
+                app:icon="@drawable/baseline_groups_24" />
 
         </LinearLayout>
     </ScrollView>
