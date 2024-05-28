@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +41,7 @@ public class ControladorMenuAdmin extends AppCompatActivity {
         }
     }
     public void adminUsuarios(View view) {
+        Toast.makeText(this, "pa la ventana de administrar usuarios", Toast.LENGTH_SHORT).show();
     }
 
     public void adminCreateUser(View view) {
@@ -56,6 +58,9 @@ public class ControladorMenuAdmin extends AppCompatActivity {
     }
 
     public void adminEventos(View view) {
+        Intent intent = new Intent(this, ControladorGestionEventos.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     public void cerrarSesion(View view) {
