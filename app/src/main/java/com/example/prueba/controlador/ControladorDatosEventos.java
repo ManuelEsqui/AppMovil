@@ -239,9 +239,14 @@ public class ControladorDatosEventos extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
-            System.out.println(result);
-            Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
-            volverAtras();
+
+            if(result.equals("Has sido añadido a los participantes.")){
+                Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
+                volverAtras();
+            }else{
+                Toast.makeText(ControladorDatosEventos.this, "Ya participas en este evento", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
 

@@ -111,7 +111,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             startActivity(i);
             return true;
         }else if (id == R.id.menu6) {
-            finish();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

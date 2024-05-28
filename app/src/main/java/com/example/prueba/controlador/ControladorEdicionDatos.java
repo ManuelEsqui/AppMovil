@@ -91,10 +91,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
     }
 
     public void volverVentanaUsuarios(View view) {
-        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("user", txtusuario.getText().toString());
-        startActivity(intent);
+        finish();
     }
 
     @SuppressLint("StaticFieldLeak")

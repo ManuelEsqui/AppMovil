@@ -97,13 +97,16 @@ public class LogIn extends AppCompatActivity {
 
             //Toast.makeText(LogIn.this, result, Toast.LENGTH_SHORT).show();
             if (result.equals("[{\"admin\":0}]")){
-                Toast.makeText(LogIn.this, "Pa la ventana de usuarios", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LogIn.this, "Bienvenido "+usuario, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LogIn.this, ControladorVistaUsuarios.class);
                 intent.putExtra("user", usuario);
                 startActivity(intent);
 
             } else if (result.equals("[{\"admin\":1}]")) {
-                Toast.makeText(LogIn.this, "Pa la ventana de admins", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LogIn.this, "Bienvenido "+usuario, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LogIn.this, ControladorMenuAdmin.class);
+                intent.putExtra("user", usuario);
+                startActivity(intent);
 
             }else{
                 Toast.makeText(LogIn.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menuAdmin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#731919"
+    android:backgroundTint="#D9F8D6">
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_width="121dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:backgroundTint="#03FFFFFF"
+        android:onClick="cerrarSesion"
+        android:text="Cerrar Sesion"
+        android:textColor="#000000"
+        android:textColorHighlight="#000000"
+        android:textColorHint="#000000"
+        android:textColorLink="#0C0606"
+        app:icon="@drawable/baseline_logout_24"
+        app:iconTint="#090404"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtSaludo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="65dp"
+        android:text="Bienvenido admin"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="¿Qué deseas hacer hoy?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSaludo" />
+
+    <LinearLayout
+        android:layout_width="208dp"
+        android:layout_height="397dp"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
+        android:paddingTop="50px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14">
+
+        <Button
+            android:id="@+id/button10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="150px"
+            android:backgroundTint="#E80746"
+            android:onClick="adminEventos"
+            android:text="Administrar Eventos"
+            app:icon="@drawable/baseline_event_24" />
+
+        <Button
+            android:id="@+id/button11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="150px"
+            android:backgroundTint="#102565"
+            android:onClick="adminUsuarios"
+            android:text="Administrar usuarios"
+            app:icon="@drawable/baseline_supervised_user_circle_24" />
+
+        <Button
+            android:id="@+id/button12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="150px"
+            android:backgroundTint="#0E7E02"
+            android:onClick="adminCreateUser"
+            android:text="Crear usuario"
+            app:icon="@drawable/baseline_person_add_alt_1_24" />
+
+        <Button
+            android:id="@+id/button13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#C5AA04"
+            android:onClick="editarCuenta"
+            android:text="@string/editar_cuenta"
+            app:icon="@drawable/baseline_edit_24" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

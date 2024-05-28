@@ -39,7 +39,6 @@ public class ControladorRegistro extends AppCompatActivity {
     Spinner spLocalidades;
     ArrayList <Localidad> localidades;
     CheckBox admin;
-    String user;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +58,11 @@ public class ControladorRegistro extends AppCompatActivity {
     }
 
     private void initComp() throws IOException {
+        boolean bandera=false;
+        Bundle extras=getIntent().getExtras();
+        if (extras!=null){
+            bandera=extras.getBoolean("admin");
+        }
         localidades=new ArrayList<>();
         txtnombre=findViewById(R.id.txtNombre);
         txtapellidos=findViewById(R.id.txtApellidos);
@@ -69,7 +73,7 @@ public class ControladorRegistro extends AppCompatActivity {
         txtcontrasena=findViewById(R.id.txtContraseña);
         spLocalidades=findViewById(R.id.spinner);
         admin=findViewById(R.id.admin);
-        admin.setVisibility(View.INVISIBLE);
+        if (bandera)admin.setVisibility(View.VISIBLE);
         new SacarLocalidades().execute();
     }
 
@@ -81,6 +85,13 @@ public class ControladorRegistro extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nombreLoc);
         spLocalidades.setAdapter(adapter);
+        int i=0;
+        for (Localidad l: localidades) {
+            if (l.getId()==6){
+                spLocalidades.setSelection(i);
+            }
+            i++;
+        }
     }
 
     public void registrarse(View vista) throws IOException {
