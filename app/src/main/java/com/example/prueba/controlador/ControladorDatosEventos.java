@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,9 @@ public class ControladorDatosEventos extends AppCompatActivity {
     EditText txtNombre, txtLocalidad, txtUbicacion, txtFecha, txtPrecioTipo, txtPuntoVenta;
     TextView txtdescripcion, txtDescAdicional;
     TextView puntoVenta, precioTipo, descripcionAdicional;
+    boolean admin;
+    Button btnEliminarEvento, btnEditarevento;
+    Button btnApuntarse;
 
 
     @SuppressLint("MissingInflatedId")
@@ -42,12 +46,13 @@ public class ControladorDatosEventos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.info_de_eventos);
-        init();
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
             user=extras.getString("user");
             evento= (Evento) extras.get("evento");
+            admin=extras.getBoolean("admin");
         }
+        init();
         new ObtenerEventoCompletoAsyncTask().execute();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.infoEventos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -67,6 +72,14 @@ public class ControladorDatosEventos extends AppCompatActivity {
         puntoVenta=findViewById(R.id.tvPuntoVenta);
         precioTipo=findViewById(R.id.textViewPrecioTipo);
         descripcionAdicional=findViewById(R.id.tvDescAdicional);
+        btnEditarevento=findViewById(R.id.btnEditarEvento);
+        btnEliminarEvento=findViewById(R.id.btnEliminarEvento);
+        btnApuntarse=findViewById(R.id.btnApuntarse);
+        if (admin){
+            btnEliminarEvento.setVisibility(View.VISIBLE);
+            btnEditarevento.setVisibility(View.VISIBLE);
+            btnApuntarse.setVisibility(View.INVISIBLE);
+        }
     }
     @SuppressLint("SetTextI18n")
     private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis){
@@ -93,10 +106,11 @@ public class ControladorDatosEventos extends AppCompatActivity {
     }
 
     private void volverAtras() {
-        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
+        /*Intent intent = new Intent(this, ControladorVistaUsuarios.class);
         intent.putExtra("user", user);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        startActivity(intent);*/
+        finish();
     }
 
     @SuppressLint("SetTextI18n")
@@ -127,7 +141,15 @@ public class ControladorDatosEventos extends AppCompatActivity {
         Intent intent=new Intent(this, ControladorAsistentes.class);
         intent.putExtra("idEvento", evento.getId());
         intent.putExtra("user", user);
+        intent.putExtra("admin", admin);
         startActivity(intent);
+    }
+
+    public void eliminarEvento(View view) {
+        new EliminarAsyncTask().execute();
+    }
+
+    public void editarEvento(View view) {
     }
 
 
@@ -250,5 +272,57 @@ public class ControladorDatosEventos extends AppCompatActivity {
         }
 
 
+    }
+    private class EliminarAsyncTask extends AsyncTask<Void, Void, String> {
+        ProgressDialog progreso;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Inicializar y mostrar el ProgressDialog
+            progreso= new ProgressDialog(ControladorDatosEventos.this);
+            progreso.setMessage("Cargando datos...");
+            progreso.setCancelable(false);//no se puede cancelar
+            progreso.show();
+        }
+        @Override
+        protected String doInBackground(Void... params) {
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/eliminarEventos.php?id_evento="+evento.getId();
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Leer la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

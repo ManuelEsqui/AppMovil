@@ -29,6 +29,7 @@ public class ControladorAsistentes extends AppCompatActivity {
     TextView totalAsistentes;
     ListView listaAsistentes;
     ArrayList<String> usuarios=new ArrayList<>();
+    boolean admin;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class ControladorAsistentes extends AppCompatActivity {
         if (extras!=null){
             user= extras.getString("user");
             idEvento=extras.getInt("idEvento");
+            admin=extras.getBoolean("admin");
         }
         new AsistenciasAsyncTask().execute();
         setContentView(R.layout.asistentes_view);
@@ -53,10 +55,17 @@ public class ControladorAsistentes extends AppCompatActivity {
     }
 
     public void volverInicio(View view) {
-        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("user", user);
-        startActivity(intent);
+        if (admin){
+            Intent intent = new Intent(this, ControladorMenuAdmin.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(this, ControladorVistaUsuarios.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        }
     }
 
     public void vueltaAtras(View view) {

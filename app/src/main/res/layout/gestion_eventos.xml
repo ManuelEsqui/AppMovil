@@ -8,7 +8,7 @@
     android:backgroundTint="#00752727">
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/listaEventos"
         android:layout_width="410dp"
         android:layout_height="595dp"
         android:layout_marginStart="2dp"
@@ -26,19 +26,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
         android:layout_marginBottom="10dp"
+        android:onClick="insertarEvento"
         android:text="Añadir evento"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listView" />
+        app:layout_constraintTop_toBottomOf="@+id/listaEventos" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/nada"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:text="Lista de eventos actual"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintBottom_toTopOf="@+id/listaEventos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
