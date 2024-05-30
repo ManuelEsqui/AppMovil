@@ -2,12 +2,12 @@ package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -31,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class agregarEventos extends AppCompatActivity {
 
@@ -41,7 +40,8 @@ public class agregarEventos extends AppCompatActivity {
     private Switch switch1;
     private EditText txtNombre, txtDescripcion, txtLugar, txtPrecioTipo, txtDescripcionAdicional, txtPuntoVenta;
     private Spinner spCiudades;
-    Date fecha;
+    String user;
+    String fecha;
     ArrayList <Localidad> localidades=new ArrayList<>();
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,6 +49,10 @@ public class agregarEventos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.agregar_eventos);
+        Bundle extras=getIntent().getExtras();
+        if (extras!=null){
+            user=extras.getString("user");
+        }
         init();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.agregarEventos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -63,12 +67,12 @@ public class agregarEventos extends AppCompatActivity {
         spCiudades=findViewById(R.id.spinnerLocalidades);
         new SacarLocalidades().execute();
         txtPrecioTipo=findViewById(R.id.txttipoPrecio);
-        txtDescripcionAdicional=findViewById(R.id.txtDescripcionAdicional);
+        txtDescripcionAdicional=findViewById(R.id.txtDescripcionAdicional2);
         txtPuntoVenta=findViewById(R.id.puntoDeVenta);
         Button buttonSelectDate = findViewById(R.id.button_select_date);
         lyPuntoVenta = findViewById(R.id.lyPuntoVenta);
         lyDescripcionAdicional=findViewById(R.id.textInputLayoutDA);
-        textViewDate = findViewById(R.id.textview_date);
+        textViewDate = findViewById(R.id.textview_date2);
         buttonSelectDate.setOnClickListener(v -> showDatePickerDialog());
         switch1 =findViewById(R.id.switchTipoEvento);
         switch1.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -106,13 +110,13 @@ public class agregarEventos extends AppCompatActivity {
         // Crear el DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year1, month1, dayOfMonth) -> {
                     // Formatear la fecha seleccionada y mostrarla en el TextView
-                    String selectedDate = dayOfMonth + "/" + (month1 + 1) + "/" + year1;
+                    String selectedDate = year1 + "-" + (month1 + 1) + "-" + dayOfMonth;
                     textViewDate.setText(selectedDate);
+                    fecha=selectedDate;
 
             // Guardar la fecha seleccionada en un objeto Date
             Calendar selectedCalendar = Calendar.getInstance();
             selectedCalendar.set(year1, month1, dayOfMonth);
-            fecha = selectedCalendar.getTime();
                 }, year, month, day);
 
         // Mostrar el DatePickerDialog
@@ -138,18 +142,21 @@ public class agregarEventos extends AppCompatActivity {
                 Toast.makeText(this, "El precio debe ser un numero", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!puntoVenta.isEmpty()){
+            if (!puntoVenta.isEmpty() || fecha!=null){
                 //añadir evento de pago
+                //nombre=si&fecha=2022-07-25&descripcion=si&ubicacion=si&id_loc=2&precio=10&puntoDeVenta=si
+                new insertarEventoPagoTask().execute(nombre, descripcion, ubicacion, localidad.getId()+"", precio+"", puntoVenta);
             }else{
-                Toast.makeText(this, "Tienes que escribir el lugar donde se vende la entrada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Tienes que escribir el lugar donde se vende la entrada o fecha", Toast.LENGTH_SHORT).show();
             }
         }else{
             String tipo=txtPrecioTipo.getText().toString();
             String descripcionAdicional=txtDescripcionAdicional.getText().toString();
-            if (tipo.isEmpty() || descripcionAdicional.isEmpty()){
-                Toast.makeText(this, "Debes rellenar el campo tipo y descripcion adicional", Toast.LENGTH_SHORT).show();
+            if (tipo.isEmpty() || descripcionAdicional.isEmpty() || fecha==null){
+                Toast.makeText(this, "Debes rellenar el campo tipo y descripcion adicional o fecha", Toast.LENGTH_SHORT).show();
             }else{
                 //añadir evento gratuito
+                new insertarEventoGratisTask().execute(nombre, descripcion, ubicacion, localidad.getId()+"",tipo, descripcionAdicional);
             }
         }
     }
@@ -222,6 +229,126 @@ public class agregarEventos extends AppCompatActivity {
                 spCiudades.setSelection(i);
             }
             i++;
+        }
+    }
+    private class insertarEventoPagoTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            //http://localhost/extreventos/insertarEventoDePago.php?nombre=si&fecha=2022-07-25&descripcion=si&ubicacion=si&id_loc=2&precio=10&puntoDeVenta=si
+            String parametros = "nombre=" + params[0] +
+                    "&fecha=" + fecha +
+                    "&descripcion=" + params[1] +
+                    "&ubicacion=" + params[2] +
+                    "&id_loc=" + params[3] +
+                    "&precio=" + params[4] +
+                    "&puntoDeVenta=" + params[5];
+
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/insertarEventoDePago.php?"+parametros;
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            if (result.equals("El evento de pago ha sido añadido exitosamente.")){
+                Toast.makeText(agregarEventos.this, result, Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(agregarEventos.this, ControladorGestionEventos.class);
+                intent.putExtra("user", user);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }else {
+                Toast.makeText(agregarEventos.this, "Ha ocurrido un error inesperado insertando el evento de pago", Toast.LENGTH_SHORT).show();
+                System.out.println(result);
+            }
+
+        }
+    }
+    private class insertarEventoGratisTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            //http://localhost/extreventos/insertarEventoGratis.php?nombre=si&fecha=2022-07-25&descripcion=si&ubicacion=si&id_loc=2&tipo=10&descripcionAdicional=si
+            String parametros = "nombre=" + params[0] +
+                    "&fecha=" + fecha +
+                    "&descripcion=" + params[1] +
+                    "&ubicacion=" + params[2] +
+                    "&id_loc=" + params[3] +
+                    "&tipo=" + params[4] +
+                    "&descripcionAdicional=" + params[5];
+
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/insertarEventoGratis.php?"+parametros;
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            if (result.equals("El evento gratuito ha sido añadido exitosamente.")){
+                Toast.makeText(agregarEventos.this, result, Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(agregarEventos.this, ControladorGestionEventos.class);
+                intent.putExtra("user", user);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }else {
+                Toast.makeText(agregarEventos.this, "Ha ocurrido un error inesperado insertando el evento gratis", Toast.LENGTH_SHORT).show();
+                System.out.println(result);
+            }
+
         }
     }
 

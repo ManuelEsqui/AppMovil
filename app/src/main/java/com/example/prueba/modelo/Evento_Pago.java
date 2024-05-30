@@ -1,8 +1,9 @@
 package com.example.prueba.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Evento_Pago extends Evento{
+public class Evento_Pago extends Evento implements Serializable {
     private float precio;
     private String puntoDeVenta;
 

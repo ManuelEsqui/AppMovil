@@ -132,7 +132,7 @@
                 android:text="Descripcion" />
 
             <TextView
-                android:id="@+id/txtDescripcion"
+                android:id="@+id/txtDescripcion2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"

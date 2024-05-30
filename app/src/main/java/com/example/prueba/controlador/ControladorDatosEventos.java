@@ -38,6 +38,9 @@ public class ControladorDatosEventos extends AppCompatActivity {
     boolean admin;
     Button btnEliminarEvento, btnEditarevento;
     Button btnApuntarse;
+    boolean evPagoB;
+    Evento_Pago eventoPagoEditar;
+    Evento_Gratis eventoGratisEditar;
 
 
     @SuppressLint("MissingInflatedId")
@@ -68,7 +71,7 @@ public class ControladorDatosEventos extends AppCompatActivity {
         txtPrecioTipo=findViewById(R.id.txtPrecioTipo);
         txtPuntoVenta=findViewById(R.id.editTextText6);
         txtDescAdicional=findViewById(R.id.txtDescAdicional);
-        txtdescripcion=findViewById(R.id.txtDescripcion);
+        txtdescripcion=findViewById(R.id.txtDescripcion2);
         puntoVenta=findViewById(R.id.tvPuntoVenta);
         precioTipo=findViewById(R.id.textViewPrecioTipo);
         descripcionAdicional=findViewById(R.id.tvDescAdicional);
@@ -83,6 +86,7 @@ public class ControladorDatosEventos extends AppCompatActivity {
     }
     @SuppressLint("SetTextI18n")
     private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis){
+        evPagoB=false;
         System.out.println(eventoGratis.toString());
         //Se hacen invisible los componentes no necesarios
         txtPuntoVenta.setVisibility(View.INVISIBLE);
@@ -115,6 +119,7 @@ public class ControladorDatosEventos extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void rellenarDatosEventoPago(Evento_Pago eventoPago){
+        evPagoB=true;
         System.out.println(eventoPago.toString());
         //Invisible componentes no necesarios
         descripcionAdicional.setVisibility(View.INVISIBLE);
@@ -150,6 +155,14 @@ public class ControladorDatosEventos extends AppCompatActivity {
     }
 
     public void editarEvento(View view) {
+        Intent intent=new Intent(this, ControladorEditEvento.class);
+        if(evPagoB){
+            intent.putExtra("eventoPago", eventoPagoEditar);
+        }else{
+            intent.putExtra("eventoGratis", eventoGratisEditar);
+        }
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
 
@@ -208,11 +221,13 @@ public class ControladorDatosEventos extends AppCompatActivity {
                     float precio=Float.parseFloat(datosArray[0]);
                     String puntoVenta=datosArray[1];
                     Evento_Pago eventoPago=new Evento_Pago(evento, precio, puntoVenta);
+                    eventoPagoEditar=new Evento_Pago(evento, precio, puntoVenta);
                     rellenarDatosEventoPago(eventoPago);
                 }catch (Exception e){
                     String tipo=datosArray[0];
                     String descripcionAdicional=datosArray[1];
                     Evento_Gratis eventoGratis=new Evento_Gratis(evento, descripcionAdicional, tipo);
+                    eventoGratisEditar=new Evento_Gratis(evento, descripcionAdicional, tipo);
                     rellenarDatosEventoGratis(eventoGratis);
                 }finally {
                     progreso.dismiss();
@@ -322,7 +337,11 @@ public class ControladorDatosEventos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(ControladorDatosEventos.this, result, Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent(ControladorDatosEventos.this, ControladorGestionEventos.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("user", user);
+            startActivity(intent);
         }
     }
 }

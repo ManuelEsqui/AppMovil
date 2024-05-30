@@ -1,8 +1,9 @@
 package com.example.prueba.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Evento_Gratis extends Evento{
+public class Evento_Gratis extends Evento implements Serializable {
     private String descripcionAdicional;
     private String tipo;
 
