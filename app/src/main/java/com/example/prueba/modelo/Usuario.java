@@ -20,6 +20,11 @@ public class Usuario implements Serializable {
         this.edad = edad;
         this.admin = admin;
     }
+    public Usuario(String nombre,String apellidos, String user){
+        this.nombre=nombre;
+        this.apellidos=apellidos;
+        this.user=user;
+    }
 
     public String getNombre() {
         return nombre;

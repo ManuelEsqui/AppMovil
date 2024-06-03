@@ -41,7 +41,10 @@ public class ControladorMenuAdmin extends AppCompatActivity {
         }
     }
     public void adminUsuarios(View view) {
-        Toast.makeText(this, "pa la ventana de administrar usuarios", Toast.LENGTH_SHORT).show();
+        Intent ventana = new Intent(this, ControladorListaUsuarios.class);
+        ventana.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ventana.putExtra("admin", true);
+        startActivity(ventana);
     }
 
     public void adminCreateUser(View view) {

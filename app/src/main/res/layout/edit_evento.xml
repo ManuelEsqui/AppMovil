@@ -24,14 +24,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/button17"
+                android:layout_width="57dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="850px"
+                android:background="#00853636"
+                android:onClick="volverAtras"
+                android:text="Button"
+                app:icon="@drawable/baseline_arrow_back_ios_24"
+                app:iconTint="#000000" />
+
             <TextView
                 android:id="@+id/textView16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="410px"
+                android:layout_marginLeft="380px"
                 android:layout_marginTop="100px"
                 android:layout_marginBottom="100px"
-                android:text="Edita el evento" />
+                android:text="Edita el evento"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

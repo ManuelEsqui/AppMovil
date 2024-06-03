@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 public class ControladorEdicionDatos extends AppCompatActivity {
 
     String user;
+    Usuario usuarioEditar;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -47,6 +49,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
             user=extras.getString("user");
+            usuarioEditar=(Usuario) extras.get("usuarioEditar");
         }
         try {
             initComp();
@@ -70,9 +73,11 @@ public class ControladorEdicionDatos extends AppCompatActivity {
     ArrayList<Localidad> localidades;
     CheckBox admin;
     Usuario usuario;
+    TextView txtSaludo;
     int localidad_id;
     private void initComp() throws IOException {
         localidades=new ArrayList<>();
+        txtSaludo=findViewById(R.id.textViewPrincipal);
         txtnombre=findViewById(R.id.txtNombre);
         txtapellidos=findViewById(R.id.txtApellidos);
         txtedad=findViewById(R.id.txtEdad);
@@ -82,7 +87,12 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         txtcontrasena=findViewById(R.id.txtContraseña);
         spLocalidades=findViewById(R.id.spinner);
         admin=findViewById(R.id.admin);
-        admin.setVisibility(View.INVISIBLE);
+        if(usuarioEditar==null){
+            admin.setVisibility(View.INVISIBLE);
+        }else {
+            txtSaludo.setText("Edita a "+usuarioEditar.getNombre());
+            this.user=usuarioEditar.getUser();
+        }
         new SacarLocalidades().execute();
     }
 
@@ -258,10 +268,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ControladorEdicionDatos.this, "Usuario editado correctamente", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(ControladorEdicionDatos.this, ControladorEdicionDatos.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("user", txtusuario.getText().toString());
-            startActivity(intent);
+            finish();
         }
     }
     private class SacarPersonas extends AsyncTask<Void, Void, String> {
@@ -382,13 +389,15 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(ControladorEdicionDatos.this, result, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(ControladorEdicionDatos.this, LogIn.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            if (usuarioEditar!=null) {
+                finish();
+            }else{
+                Toast.makeText(ControladorEdicionDatos.this, result, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ControladorEdicionDatos.this, LogIn.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
         }
-
-
     }
 
 }
