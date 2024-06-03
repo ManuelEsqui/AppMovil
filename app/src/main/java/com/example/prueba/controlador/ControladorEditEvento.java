@@ -2,6 +2,7 @@ package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -98,7 +101,11 @@ public class ControladorEditEvento extends AppCompatActivity {
         txtdescripcion.setText(eventoGratis.getDescripcion());
         txtubicacion.setText(eventoGratis.getUbicacion());
         txtdescripcionAdicional.setText(eventoGratis.getDescripcionAdicional());
-        textViewDate.setText(eventoGratis.getFecha().toString());
+        String pattern = "yyyy-MM-dd";
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
+        String fecha=df.format(eventoGratis.getFecha());
+        textViewDate.setText(fecha);
+        //textViewDate.setText(eventoGratis.getFecha().toString());
         int i=0;
         for (Localidad l : localidades){
             if (l.getNombre().equals(eventoGratis.getLocalidad())){
@@ -123,7 +130,10 @@ public class ControladorEditEvento extends AppCompatActivity {
             }
             i++;
         }
-        textViewDate.setText(eventoPago.getFecha().toString());
+        String pattern = "yyyy-MM-dd";
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
+        String fecha=df.format(eventoPago.getFecha());
+        textViewDate.setText(fecha);
     }
 
 
@@ -146,6 +156,39 @@ public class ControladorEditEvento extends AppCompatActivity {
     }
 
     public void confirmarCambios(View view) {
+        if (lytipo.getVisibility() == View.VISIBLE){
+            //EVENTO GRATIS
+            String nombre=txtnombre.getText().toString();
+            String descripcion=txtdescripcion.getText().toString();
+            String fecha=textViewDate.getText().toString();
+            String ubicacion=txtubicacion.getText().toString();
+            int posicion = spLocalidades.getSelectedItemPosition();
+            int localidad_id= localidades.get(posicion).getId();
+            String tipo=txttipo.getText().toString();
+            String descAdicional=txtdescripcionAdicional.getText().toString();
+            if (nombre.isEmpty() || descripcion.isEmpty() || fecha.isEmpty() || ubicacion.isEmpty() || tipo.isEmpty() || descAdicional.isEmpty()){
+                Toast.makeText(this, "Debes de rellenar todos los campos solicitados", Toast.LENGTH_SHORT).show();
+            }else{
+                new EditEventoGratisAsyncTask().execute(nombre, fecha, descripcion, ubicacion, localidad_id+"", tipo, descAdicional);
+            }
+        } else if (lyprecio.getVisibility() == View.VISIBLE) {
+            //EVENTO DE PAGO
+            String nombre=txtnombre.getText().toString();
+            String descripcion=txtdescripcion.getText().toString();
+            String fecha=textViewDate.getText().toString();
+            String ubicacion=txtubicacion.getText().toString();
+            int posicion = spLocalidades.getSelectedItemPosition();
+            int localidad_id= localidades.get(posicion).getId();
+            String precio=txtprecio.getText().toString();
+            String puntoDeVenta=txtpuntoDeVenta.getText().toString();
+            if (nombre.isEmpty() || descripcion.isEmpty() || fecha.isEmpty() || ubicacion.isEmpty() || precio.isEmpty() || puntoDeVenta.isEmpty()){
+                Toast.makeText(this, "Debes de rellenar todos los campos solicitados", Toast.LENGTH_SHORT).show();
+            }else {
+                new EditEventoPagoAsyncTask().execute(nombre, fecha, descripcion, ubicacion, localidad_id+"", precio, puntoDeVenta);
+            }
+        }else {
+            Toast.makeText(this, "algo no ha ido bien jaja", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private class SacarLocalidades extends AsyncTask<Void, Void, String> {
@@ -210,5 +253,103 @@ public class ControladorEditEvento extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nombreLoc);
         spLocalidades.setAdapter(adapter);
+    }
+    @SuppressLint("StaticFieldLeak")
+    private class EditEventoGratisAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/editEventosGratis.php?nombre=" + params[0] + "&fecha=" + params[1] + "&descripcion=" + params[2] + "&ubicacion=" + params[3] + "&id_loc=" + params[4] + "&tipo=" + params[5] + "&descripcionAdicional=" + params[6] + "&id_evento=" + eventoGratis.getId();
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Leer la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ControladorEditEvento.this, result, Toast.LENGTH_SHORT).show();
+            System.out.println(result);
+            Intent intent=new Intent(ControladorEditEvento.this, ControladorGestionEventos.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        }
+
+
+    }
+    @SuppressLint("StaticFieldLeak")
+    private class EditEventoPagoAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/editEventosPago.php?nombre=" + params[0] + "&fecha=" + params[1] + "&descripcion=" + params[2] + "&ubicacion=" + params[3] + "&id_loc=" + params[4] + "&precio=" + params[5] + "&puntoDeVenta=" + params[6] + "&id_evento=" + eventoPago.getId();
+            StringBuilder response = new StringBuilder();
+
+            try {
+                URL url = new URL(requestURL);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Leer la respuesta del servidor
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } else {
+                    response.append("Error en la respuesta del servidor. Código: ").append(responseCode);
+                }
+
+                connection.disconnect();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.append("Excepción: ").append(e.getMessage());
+            }
+
+            return response.toString();
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(ControladorEditEvento.this, result, Toast.LENGTH_SHORT).show();
+            System.out.println(result);
+            Intent intent=new Intent(ControladorEditEvento.this, ControladorGestionEventos.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        }
+
+
     }
 }

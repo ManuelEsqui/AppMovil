@@ -227,7 +227,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="#9A8A02"
                     android:onClick="editarEvento"
-                    android:text="Confirmar cambios"
+                    android:text="Editar evento"
                     android:textColor="#000000"
                     android:textStyle="bold"
                     android:visibility="invisible"
