@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -17,9 +18,22 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.prueba.R;
 import com.example.prueba.modelo.Localidad;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ControladorDatosLocalidades extends AppCompatActivity {
 
+    //private MapView mapView;
+    //private GoogleMap googleMap;
     Localidad localidad;
     EditText txtNombre;
     EditText txtProvincia;
@@ -66,4 +80,45 @@ public class ControladorDatosLocalidades extends AppCompatActivity {
         intent.putExtra("user", user);
         startActivity(intent);
     }
+    //private class GeocodeTask extends AsyncTask<String, Void, LatLng> {
+
+        //@Override
+        //protected LatLng doInBackground(String... params) {
+            //String city = params[0];
+            //String province = params[1];
+            //String query = city + "," + province;
+            //String urlString = "https://maps.googleapis.com/maps/api/geocode/json?address=" + query + "&key=" + apiKey;
+            //try {
+                //URL url = new URL(urlString);
+                //HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                //conn.setRequestMethod("GET");
+                //BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                //String inputLine;
+                //StringBuilder response = new StringBuilder();
+                //while ((inputLine = in.readLine()) != null) {
+                    //response.append(inputLine);
+                //}
+                //in.close();
+                //JSONObject json = new JSONObject(response.toString());
+                //JSONArray results = json.getJSONArray("results");
+                //if (results.length() > 0) {
+                    //JSONObject location = results.getJSONObject(0).getJSONObject("geometry").getJSONObject("location");
+                    //double lat = location.getDouble("lat");
+                    //double lng = location.getDouble("lng");
+                    //return new LatLng(lat, lng);
+                //}
+            //} catch (Exception e) {
+                //e.printStackTrace();
+            //}
+            //return null;
+        //}
+
+        //@Override
+        //protected void onPostExecute(LatLng latLng) {
+            //if (latLng != null) {
+                //googleMap.addMarker(new MarkerOptions().position(latLng).title(localidad.getNombre() + ", " + localidad.getProvincia()));
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+            //}
+        //}
+    //}
 }
