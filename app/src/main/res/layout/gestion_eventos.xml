@@ -4,8 +4,8 @@
     android:id="@+id/gestionEventos"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00784A4A"
-    android:backgroundTint="#00752727">
+    android:background="#91AF38"
+    android:backgroundTint="#F2FAE2">
 
     <ListView
         android:id="@+id/listaEventos"

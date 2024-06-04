@@ -2,6 +2,7 @@ package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,5 +36,9 @@ public class ControladorMisEventos extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void volverMenuUsuarios(View view) {
+        finish();
     }
 }

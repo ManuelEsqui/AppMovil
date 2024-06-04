@@ -6,27 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#A33535"
-    android:backgroundTint="#E3F3DA"
+    android:backgroundTint="#F5FDD6"
     android:rotation="0"
     android:rotationX="0"
     android:rotationY="0"
     tools:context=".controlador.LogIn">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="60dp"
-        android:fontFamily="sans-serif-black"
-        android:shadowColor="#830404"
-        android:text="ExtrEventos"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-        android:textColor="#DC0202"
-        app:layout_constraintBottom_toTopOf="@+id/txtUsuario"
-        app:layout_constraintEnd_toEndOf="@+id/txtUsuario"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/txtUsuario"
@@ -90,5 +74,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="391dp"
+        android:layout_height="104dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtUsuario"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        app:srcCompat="@drawable/imagen_principal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
