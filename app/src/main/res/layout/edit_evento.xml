@@ -110,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="300px"
+                android:backgroundTint="#D60000"
                 android:text="Seleccionar fecha"
                 app:icon="@drawable/baseline_calendar_today_24" />
 

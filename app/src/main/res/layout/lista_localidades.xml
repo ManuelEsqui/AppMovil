@@ -10,13 +10,14 @@
 
     <ListView
         android:id="@+id/listViewLocalidades"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="408dp"
+        android:layout_height="659dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/volver">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
     </ListView>
 
@@ -24,13 +25,23 @@
         android:id="@+id/volver"
         android:layout_width="43dp"
         android:layout_height="40dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginBottom="7dp"
         android:backgroundTint="#00FF0E0E"
         android:onClick="volverMenuUsuarios"
         app:icon="@drawable/baseline_arrow_back_ios_24"
         app:iconTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Localidades de Extremadura"
+        android:textSize="20sp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/listViewLocalidades"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

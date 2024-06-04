@@ -35,7 +35,7 @@ import java.util.Calendar;
 public class agregarEventos extends AppCompatActivity {
 
     private TextView textViewDate;
-    private TextInputLayout lyPuntoVenta, lyDescripcionAdicional;
+    private TextInputLayout lyPuntoVenta, lyDescripcionAdicional, lytipoPrecio;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch switch1;
     private EditText txtNombre, txtDescripcion, txtLugar, txtPrecioTipo, txtDescripcionAdicional, txtPuntoVenta;
@@ -72,6 +72,7 @@ public class agregarEventos extends AppCompatActivity {
         Button buttonSelectDate = findViewById(R.id.button_select_date);
         lyPuntoVenta = findViewById(R.id.lyPuntoVenta);
         lyDescripcionAdicional=findViewById(R.id.textInputLayoutDA);
+        lytipoPrecio=findViewById(R.id.lytipoPrecio);
         textViewDate = findViewById(R.id.textview_date2);
         buttonSelectDate.setOnClickListener(v -> showDatePickerDialog());
         switch1 =findViewById(R.id.switchTipoEvento);
@@ -91,13 +92,13 @@ public class agregarEventos extends AppCompatActivity {
     private void camposEventoPago() {
         lyPuntoVenta.setVisibility(View.VISIBLE);
         lyDescripcionAdicional.setVisibility(View.INVISIBLE);
-        txtPrecioTipo.setHint("Precio");
+        lytipoPrecio.setHint("Precio");
     }
 
     private void camposEventoGratis() {
         lyPuntoVenta.setVisibility(View.INVISIBLE);
         lyDescripcionAdicional.setVisibility(View.VISIBLE);
-        txtPrecioTipo.setHint("Tipo");
+        lytipoPrecio.setHint("Tipo");
     }
 
     private void showDatePickerDialog() {
@@ -166,6 +167,10 @@ public class agregarEventos extends AppCompatActivity {
                 new insertarEventoGratisTask().execute(nombre, descripcion, ubicacion, localidad.getId()+"",tipo, descripcionAdicional);
             }
         }
+    }
+
+    public void atrasX(View view) {
+        finish();
     }
 
     private class SacarLocalidades extends AsyncTask<Void, Void, String> {
