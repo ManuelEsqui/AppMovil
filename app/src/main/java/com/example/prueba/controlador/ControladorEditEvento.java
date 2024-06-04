@@ -180,6 +180,18 @@ public class ControladorEditEvento extends AppCompatActivity {
             int posicion = spLocalidades.getSelectedItemPosition();
             int localidad_id= localidades.get(posicion).getId();
             String precio=txtprecio.getText().toString();
+            if (precio.contains("-")){
+                Toast.makeText(this, "No se puede poner un numero negativo", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (precio.contains(",")) {
+                Toast.makeText(this, "Para escibir decimales se debe colocar un punto", Toast.LENGTH_SHORT).show();
+            }
+            try {
+                Float.parseFloat(precio);
+            }catch (Exception e){
+                Toast.makeText(this, "El precio debe ser un numero", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String puntoDeVenta=txtpuntoDeVenta.getText().toString();
             if (nombre.isEmpty() || descripcion.isEmpty() || fecha.isEmpty() || ubicacion.isEmpty() || precio.isEmpty() || puntoDeVenta.isEmpty()){
                 Toast.makeText(this, "Debes de rellenar todos los campos solicitados", Toast.LENGTH_SHORT).show();

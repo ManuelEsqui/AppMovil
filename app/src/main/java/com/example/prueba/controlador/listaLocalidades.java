@@ -64,9 +64,7 @@ public class listaLocalidades extends AppCompatActivity {
         listViewLocalidades.setAdapter(adapter);
     }
     public void volverMenuUsuarios(View view) {
-        Intent intent = new Intent(this, ControladorVistaUsuarios.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        finish();
     }
 
     private class ObtenerLocalidadesAsyncTask extends AsyncTask<Void, Void, String> {
@@ -121,15 +119,12 @@ public class listaLocalidades extends AppCompatActivity {
                     Arraylocalidades.add(l);
                 }
                 initDatos();
-                listViewLocalidades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Localidad loc =Arraylocalidades.get(position);
-                        Intent intent=new Intent(listaLocalidades.this, ControladorDatosLocalidades.class);
-                        intent.putExtra("localidad", loc);
-                        intent.putExtra("user", user);
-                        startActivity(intent);
-                    }
+                listViewLocalidades.setOnItemClickListener((parent, view, position, id) -> {
+                    Localidad loc =Arraylocalidades.get(position);
+                    Intent intent=new Intent(listaLocalidades.this, ControladorDatosLocalidades.class);
+                    intent.putExtra("localidad", loc);
+                    intent.putExtra("user", user);
+                    startActivity(intent);
                 });
             } catch (JSONException e) {
                 throw new RuntimeException(e);

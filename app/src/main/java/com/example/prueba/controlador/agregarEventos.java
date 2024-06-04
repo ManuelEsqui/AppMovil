@@ -135,6 +135,13 @@ public class agregarEventos extends AppCompatActivity {
         }
         if (switch1.isChecked()){
             String puntoVenta=txtPuntoVenta.getText().toString();
+            if (txtPrecioTipo.getText().toString().contains("-")){
+                Toast.makeText(this, "No se puede poner un numero negativo", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (txtPrecioTipo.getText().toString().contains(",")) {
+                Toast.makeText(this, "Para escibir decimales se debe colocar un punto", Toast.LENGTH_SHORT).show();
+                return;
+            }
             float precio;
             try {
                 precio=Float.parseFloat(txtPrecioTipo.getText().toString());
