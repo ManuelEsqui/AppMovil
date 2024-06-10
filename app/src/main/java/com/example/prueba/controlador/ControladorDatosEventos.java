@@ -30,74 +30,91 @@ import java.text.SimpleDateFormat;;
 
 public class ControladorDatosEventos extends AppCompatActivity {
 
-    String user;
-    Evento evento;
+    String user; // Usuario actual
+    Evento evento; // Evento actual
     EditText txtNombre, txtLocalidad, txtUbicacion, txtFecha, txtPrecioTipo, txtPuntoVenta;
     TextView txtdescripcion, txtDescAdicional;
     TextView puntoVenta, precioTipo, descripcionAdicional;
-    boolean admin;
+    boolean admin; // Si el usuario es administrador
     Button btnEliminarEvento, btnEditarevento;
-    Button btnApuntarse;
-    boolean evPagoB;
-    Evento_Pago eventoPagoEditar;
-    Evento_Gratis eventoGratisEditar;
-
+    Button btnApuntarse; // Botón para apuntarse al evento
+    boolean evPagoB; // Indica si el evento es de pago
+    Evento_Pago eventoPagoEditar; // Evento de pago para editar
+    Evento_Gratis eventoGratisEditar; // Evento gratis para editar
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Habilitar diseño EdgeToEdge
         EdgeToEdge.enable(this);
         setContentView(R.layout.info_de_eventos);
-        Bundle extras=getIntent().getExtras();
-        if (extras!=null){
-            user=extras.getString("user");
-            evento= (Evento) extras.get("evento");
-            admin=extras.getBoolean("admin");
+
+        // Obtener extras del Intent
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            user = extras.getString("user");
+            evento = (Evento) extras.get("evento");
+            admin = extras.getBoolean("admin");
         }
+
+        // Inicializar componentes de la interfaz
         init();
+
+        // Ejecutar tarea asíncrona para obtener detalles completos del evento
         new ObtenerEventoCompletoAsyncTask().execute();
+
+        // Configurar insets de ventana
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.infoEventos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-    private void init(){
-        txtNombre=findViewById(R.id.txtNombreEv);
-        txtLocalidad=findViewById(R.id.txtLocalidadEv);
-        txtUbicacion=findViewById(R.id.txtUbicacionEv);
-        txtFecha=findViewById(R.id.txtFechaEv);
-        txtPrecioTipo=findViewById(R.id.txtPrecioTipo);
-        txtPuntoVenta=findViewById(R.id.editTextText6);
-        txtDescAdicional=findViewById(R.id.txtDescAdicional);
-        txtdescripcion=findViewById(R.id.txtDescripcion2);
-        puntoVenta=findViewById(R.id.tvPuntoVenta);
-        precioTipo=findViewById(R.id.textViewPrecioTipo);
-        descripcionAdicional=findViewById(R.id.tvDescAdicional);
-        btnEditarevento=findViewById(R.id.btnEditarEvento);
-        btnEliminarEvento=findViewById(R.id.btnEliminarEvento);
-        btnApuntarse=findViewById(R.id.btnApuntarse);
-        if (admin){
+
+    // Método para inicializar los componentes de la interfaz
+    private void init() {
+        txtNombre = findViewById(R.id.txtNombreEv);
+        txtLocalidad = findViewById(R.id.txtLocalidadEv);
+        txtUbicacion = findViewById(R.id.txtUbicacionEv);
+        txtFecha = findViewById(R.id.txtFechaEv);
+        txtPrecioTipo = findViewById(R.id.txtPrecioTipo);
+        txtPuntoVenta = findViewById(R.id.editTextText6);
+        txtDescAdicional = findViewById(R.id.txtDescAdicional);
+        txtdescripcion = findViewById(R.id.txtDescripcion2);
+        puntoVenta = findViewById(R.id.tvPuntoVenta);
+        precioTipo = findViewById(R.id.textViewPrecioTipo);
+        descripcionAdicional = findViewById(R.id.tvDescAdicional);
+        btnEditarevento = findViewById(R.id.btnEditarEvento);
+        btnEliminarEvento = findViewById(R.id.btnEliminarEvento);
+        btnApuntarse = findViewById(R.id.btnApuntarse);
+
+        // Mostrar u ocultar botones según si el usuario es administrador
+        if (admin) {
             btnEliminarEvento.setVisibility(View.VISIBLE);
             btnEditarevento.setVisibility(View.VISIBLE);
             btnApuntarse.setVisibility(View.INVISIBLE);
         }
     }
+
+    // Método para rellenar datos de un evento gratis
     @SuppressLint("SetTextI18n")
-    private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis){
-        evPagoB=false;
+    private void rellenarDatosEventoGratis(Evento_Gratis eventoGratis) {
+        evPagoB = false;
         System.out.println(eventoGratis.toString());
-        //Se hacen invisible los componentes no necesarios
+
+        // Ocultar componentes no necesarios
         txtPuntoVenta.setVisibility(View.INVISIBLE);
         puntoVenta.setVisibility(View.INVISIBLE);
-        //se rellena el resto
+
+        // Rellenar campos con los datos del evento
         txtNombre.setText(eventoGratis.getNombre());
         txtLocalidad.setText(eventoGratis.getLocalidad());
         txtUbicacion.setText(eventoGratis.getUbicacion());
         String pattern = "MM/dd/yyyy";
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
-        String fecha=df.format(eventoGratis.getFecha());
+        String fecha = df.format(eventoGratis.getFecha());
         txtFecha.setText(fecha);
         txtdescripcion.setText(eventoGratis.getDescripcion());
         precioTipo.setText("Tipo");
@@ -105,7 +122,8 @@ public class ControladorDatosEventos extends AppCompatActivity {
         txtDescAdicional.setText(eventoGratis.getDescripcionAdicional());
     }
 
-    public void atras(View v){
+    // Método para volver a la pantalla anterior
+    public void atras(View v) {
         volverAtras();
     }
 
@@ -117,69 +135,78 @@ public class ControladorDatosEventos extends AppCompatActivity {
         finish();
     }
 
+    // Método para rellenar datos de un evento de pago
     @SuppressLint("SetTextI18n")
-    private void rellenarDatosEventoPago(Evento_Pago eventoPago){
-        evPagoB=true;
+    private void rellenarDatosEventoPago(Evento_Pago eventoPago) {
+        evPagoB = true;
         System.out.println(eventoPago.toString());
-        //Invisible componentes no necesarios
+
+        // Ocultar componentes no necesarios
         descripcionAdicional.setVisibility(View.INVISIBLE);
         txtDescAdicional.setVisibility(View.INVISIBLE);
-        //Se rellena
+
+        // Rellenar campos con los datos del evento
         txtNombre.setText(eventoPago.getNombre());
         txtLocalidad.setText(eventoPago.getLocalidad());
         txtUbicacion.setText(eventoPago.getUbicacion());
         String pattern = "MM/dd/yyyy";
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
-        String fecha=df.format(eventoPago.getFecha());
+        String fecha = df.format(eventoPago.getFecha());
         txtFecha.setText(fecha);
         txtdescripcion.setText(eventoPago.getDescripcion());
-        txtPrecioTipo.setText(eventoPago.getPrecio()+"");
+        txtPrecioTipo.setText(eventoPago.getPrecio() + "");
         precioTipo.setText("Precio");
         txtPuntoVenta.setText(eventoPago.getPuntoDeVenta());
     }
 
+    // Método para apuntarse a un evento
     public void apuntarse(View view) {
         new ApuntarseAsyncTask().execute();
     }
 
+    // Método para ver la lista de asistentes a un evento
     public void asistenciaEvento(View view) {
-        Intent intent=new Intent(this, ControladorAsistentes.class);
+        Intent intent = new Intent(this, ControladorAsistentes.class);
         intent.putExtra("idEvento", evento.getId());
         intent.putExtra("user", user);
         intent.putExtra("admin", admin);
         startActivity(intent);
     }
 
+    // Método para eliminar un evento
     public void eliminarEvento(View view) {
         new EliminarAsyncTask().execute();
     }
 
+    // Método para editar un evento
     public void editarEvento(View view) {
-        Intent intent=new Intent(this, ControladorEditEvento.class);
-        if(evPagoB){
+        Intent intent = new Intent(this, ControladorEditEvento.class);
+        if (evPagoB) {
             intent.putExtra("eventoPago", eventoPagoEditar);
-        }else{
+        } else {
             intent.putExtra("eventoGratis", eventoGratisEditar);
         }
         intent.putExtra("user", user);
         startActivity(intent);
     }
 
-
+    // Clase AsyncTask para obtener detalles completos del evento desde el servidor
     private class ObtenerEventoCompletoAsyncTask extends AsyncTask<Void, Void, String> {
         ProgressDialog progreso;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Inicializar y mostrar el ProgressDialog
-            progreso= new ProgressDialog(ControladorDatosEventos.this);
+            progreso = new ProgressDialog(ControladorDatosEventos.this);
             progreso.setMessage("Cargando datos...");
-            progreso.setCancelable(false);//no se puede cancelar
+            progreso.setCancelable(false); // No se puede cancelar
             progreso.show();
         }
+
         @Override
         protected String doInBackground(Void... params) {
-            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/obtenerEventoCompleto.php?id="+evento.getId();
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/obtenerEventoCompleto.php?id=" + evento.getId();
             StringBuilder response = new StringBuilder();
 
             try {
@@ -212,32 +239,34 @@ public class ControladorDatosEventos extends AppCompatActivity {
 
             return response.toString();
         }
+
         @Override
         protected void onPostExecute(String result) {
-
-            if (!result.isEmpty()){
+            if (!result.isEmpty()) {
                 String[] datosArray = result.split("/");
                 try {
-                    float precio=Float.parseFloat(datosArray[0]);
-                    String puntoVenta=datosArray[1];
-                    Evento_Pago eventoPago=new Evento_Pago(evento, precio, puntoVenta);
-                    eventoPagoEditar=new Evento_Pago(evento, precio, puntoVenta);
+                    float precio = Float.parseFloat(datosArray[0]);
+                    String puntoVenta = datosArray[1];
+                    Evento_Pago eventoPago = new Evento_Pago(evento, precio, puntoVenta);
+                    eventoPagoEditar = new Evento_Pago(evento, precio, puntoVenta);
                     rellenarDatosEventoPago(eventoPago);
-                }catch (Exception e){
-                    String tipo=datosArray[0];
-                    String descripcionAdicional=datosArray[1];
-                    Evento_Gratis eventoGratis=new Evento_Gratis(evento, descripcionAdicional, tipo);
-                    eventoGratisEditar=new Evento_Gratis(evento, descripcionAdicional, tipo);
+                } catch (Exception e) {
+                    String tipo = datosArray[0];
+                    String descripcionAdicional = datosArray[1];
+                    Evento_Gratis eventoGratis = new Evento_Gratis(evento, descripcionAdicional, tipo);
+                    eventoGratisEditar = new Evento_Gratis(evento, descripcionAdicional, tipo);
                     rellenarDatosEventoGratis(eventoGratis);
-                }finally {
+                } finally {
                     progreso.dismiss();
                 }
-            }else{
-                Toast.makeText(ControladorDatosEventos.this, "No se han econtrado los datos", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ControladorDatosEventos.this, "No se han encontrado los datos", Toast.LENGTH_SHORT).show();
             }
-
         }
     }
+
+    // Clase AsyncTask para apuntarse a un evento desde el servidor
+
     private class ApuntarseAsyncTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {

@@ -22,14 +22,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LogIn extends AppCompatActivity {
-    String usuario;
-    String contra;
+    String usuario; // Nombre de usuario
+    String contra;  // Contraseña
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Habilitar diseño EdgeToEdge
         EdgeToEdge.enable(this);
         setContentView(R.layout.login_view);
+
+        // Configurar insets de ventana para la vista principal
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -37,29 +41,35 @@ public class LogIn extends AppCompatActivity {
         });
     }
 
-
+    // Método para registrar un nuevo usuario
     public void registrarUsuario(View view) {
         Intent ventana = new Intent(this, ControladorRegistro.class);
         ventana.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(ventana);
     }
 
-
+    // Método para iniciar sesión
     public void logIn(View view) {
-        EditText txtUsuaio=findViewById(R.id.txtUsuario);
-        EditText txtContra=findViewById(R.id.txtContraseña);
-        usuario=txtUsuaio.getText().toString();
-        contra=txtContra.getText().toString();
-        if (usuario.isEmpty() || contra.isEmpty()){
+        // Obtener el nombre de usuario y la contraseña de los campos de texto
+        EditText txtUsuaio = findViewById(R.id.txtUsuario);
+        EditText txtContra = findViewById(R.id.txtContraseña);
+        usuario = txtUsuaio.getText().toString();
+        contra = txtContra.getText().toString();
+
+        // Verificar que los campos no estén vacíos
+        if (usuario.isEmpty() || contra.isEmpty()) {
             Toast.makeText(this, "Debes rellenar todos los campos", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
+            // Ejecutar la tarea asíncrona para validar el usuario
             new LoginUsuarioAsyncTask().execute(usuario, contra);
         }
     }
+
+    // Clase AsyncTask para validar el usuario en segundo plano
     private class LoginUsuarioAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/validar_usuario.php?usuario=" + params[0] + "&contrasena=" + params[1];
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/validar_usuario.php?usuario=" + params[0] + "&contrasena=" + params[1];
             StringBuilder response = new StringBuilder();
 
             try {
@@ -92,28 +102,25 @@ public class LogIn extends AppCompatActivity {
 
             return response.toString();
         }
+
         @Override
         protected void onPostExecute(String result) {
-
-            //Toast.makeText(LogIn.this, result, Toast.LENGTH_SHORT).show();
-            if (result.equals("[{\"admin\":0}]")){
-                Toast.makeText(LogIn.this, "Bienvenido "+usuario, Toast.LENGTH_SHORT).show();
+            // Manejar la respuesta del servidor después de la validación del usuario
+            if (result.equals("[{\"admin\":0}]")) {
+                Toast.makeText(LogIn.this, "Bienvenido " + usuario, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LogIn.this, ControladorVistaUsuarios.class);
                 intent.putExtra("user", usuario);
                 startActivity(intent);
 
             } else if (result.equals("[{\"admin\":1}]")) {
-                Toast.makeText(LogIn.this, "Bienvenido "+usuario, Toast.LENGTH_SHORT).show();
+                Toast.makeText(LogIn.this, "Bienvenido " + usuario, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LogIn.this, ControladorMenuAdmin.class);
                 intent.putExtra("user", usuario);
                 startActivity(intent);
 
-            }else{
+            } else {
                 Toast.makeText(LogIn.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
             }
-
         }
-
-
     }
 }

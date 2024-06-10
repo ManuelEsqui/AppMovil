@@ -11,10 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="16dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="59dp"
+        android:layout_marginBottom="54dp"
         android:text="Eventos de pago"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/listaeventosPago"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,15 +23,10 @@
 
     <ListView
         android:id="@+id/listaeventosPago"
-        android:layout_width="413dp"
-        android:layout_height="667dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPago" />
 </androidx.constraintlayout.widget.ConstraintLayout>

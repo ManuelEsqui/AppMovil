@@ -24,43 +24,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ControladorAsistentes extends AppCompatActivity {
-    int idEvento;
-    String user;
-    TextView totalAsistentes;
-    ListView listaAsistentes;
-    ArrayList<String> usuarios=new ArrayList<>();
-    boolean admin;
+    int idEvento; // ID del evento
+    String user; // Usuario
+    TextView totalAsistentes; // TextView para mostrar el total de asistentes
+    ListView listaAsistentes; // ListView para mostrar la lista de asistentes
+    ArrayList<String> usuarios = new ArrayList<>(); // Lista de usuarios que asisten al evento
+    boolean admin; // Booleano para verificar si el usuario es administrador
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Habilitar diseño EdgeToEdge
         EdgeToEdge.enable(this);
-        Bundle extras=getIntent().getExtras();
-        if (extras!=null){
-            user= extras.getString("user");
-            idEvento=extras.getInt("idEvento");
-            admin=extras.getBoolean("admin");
+
+        // Obtener extras del Intent
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            user = extras.getString("user");
+            idEvento = extras.getInt("idEvento");
+            admin = extras.getBoolean("admin");
         }
+
+        // Ejecutar tarea asíncrona para obtener asistentes
         new AsistenciasAsyncTask().execute();
+
+        // Establecer el contenido de la vista
         setContentView(R.layout.asistentes_view);
+
+        // Configurar insets de ventana
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.asistencias), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-    private void init(){
-        totalAsistentes=findViewById(R.id.totalPersonas);
-        listaAsistentes=findViewById(R.id.listaPersonasAsistentes);
+
+    // Inicializar componentes de la interfaz
+    private void init() {
+        totalAsistentes = findViewById(R.id.totalPersonas);
+        listaAsistentes = findViewById(R.id.listaPersonasAsistentes);
     }
 
+    // Volver al inicio según el tipo de usuario
     public void volverInicio(View view) {
-        if (admin){
+        if (admin) {
             Intent intent = new Intent(this, ControladorMenuAdmin.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("user", user);
             startActivity(intent);
-        }else{
+        } else {
             Intent intent = new Intent(this, ControladorVistaUsuarios.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("user", user);
@@ -68,13 +82,16 @@ public class ControladorAsistentes extends AppCompatActivity {
         }
     }
 
+    // Volver a la actividad anterior
     public void vueltaAtras(View view) {
         finish();
     }
+
+    // Clase asíncrona para obtener la lista de asistentes desde el servidor
     private class AsistenciasAsyncTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
-            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/listaDeAsistentes.php?id_evento=" + idEvento;
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/listaDeAsistentes.php?id_evento=" + idEvento;
             StringBuilder response = new StringBuilder();
 
             try {
@@ -107,20 +124,27 @@ public class ControladorAsistentes extends AppCompatActivity {
 
             return response.toString();
         }
+
         @Override
         protected void onPostExecute(String result) {
+            // Separar la respuesta en un array y agregar a la lista de usuarios
             String[] AsistentesArray = result.split("/");
             usuarios.addAll(Arrays.asList(AsistentesArray));
+
+            // Inicializar componentes de la interfaz y el ListView
             init();
             initListView();
         }
-
     }
 
     @SuppressLint("SetTextI18n")
     private void initListView() {
+        // Crear y configurar el adaptador para el ListView
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
         listaAsistentes.setAdapter(adapter);
-        totalAsistentes.setText("Asisten "+usuarios.size()+" usuarios al evento");
+
+        // Actualizar el TextView con el total de asistentes
+        totalAsistentes.setText("Asisten " + usuarios.size() + " usuarios al evento");
     }
 }
+
