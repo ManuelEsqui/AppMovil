@@ -199,6 +199,7 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             }
         }
     }
+    //sobreescribe el metodo de pulsar en la fecha de atras
     @Override
     public void onBackPressed() {
         super.onBackPressed();

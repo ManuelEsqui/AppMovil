@@ -56,9 +56,11 @@ public class ControladorRegistro extends AppCompatActivity {
             return insets;
         });
     }
+    //inicializa los componentes
 
     private void initComp() throws IOException {
         boolean bandera=false;
+        //obtiene los datos del anterior intent
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
             bandera=extras.getBoolean("admin");
@@ -77,6 +79,7 @@ public class ControladorRegistro extends AppCompatActivity {
         new SacarLocalidades().execute();
     }
 
+    //carga los datos en el spinner
     private void cargarDatosSpinner() {
         ArrayList <String> nombreLoc=new ArrayList<>();
         for(Localidad l:localidades){
@@ -121,9 +124,11 @@ public class ControladorRegistro extends AppCompatActivity {
         new insertarPersona().execute(nombre, apellidos, edad+"", sexo, estadoCivil, usuario, contrasena, localidad.getId()+"");
     }
 
+    //vuelve atras
     public void volverLogin(View vista){
         finish();
     }
+    //extrae las localidades
     private class SacarLocalidades extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
@@ -161,7 +166,7 @@ public class ControladorRegistro extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (!result.isEmpty()) {
-                // Parse the response and update localidades
+                // Parsea la respuesta y obtiene las localidades
                 String[] localidadesArray = result.split("/");
                 for (String localidadStr : localidadesArray) {
                     String[] idNombre = localidadStr.split("-");
@@ -171,7 +176,7 @@ public class ControladorRegistro extends AppCompatActivity {
                     localidades.add(localidad);
                 }
 
-                // Update the spinner on the UI thread
+                // Actualiza el spinner
                 cargarDatosSpinner();
             } else {
                 Toast.makeText(ControladorRegistro.this, "Error loading localidades", Toast.LENGTH_LONG).show();

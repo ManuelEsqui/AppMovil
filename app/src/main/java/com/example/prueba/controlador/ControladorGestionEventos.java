@@ -31,33 +31,45 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class ControladorGestionEventos extends AppCompatActivity {
+
+    // Variables para almacenar información del usuario y eventos
     String user;
     ListView listaEventos;
-    ArrayList<Evento> arrayEventos=new ArrayList<>();
-    ArrayList<String> arrDatos=new ArrayList<>();
+    ArrayList<Evento> arrayEventos = new ArrayList<>();
+    ArrayList<String> arrDatos = new ArrayList<>();
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        EdgeToEdge.enable(this); // Habilitar la funcionalidad EdgeToEdge
         setContentView(R.layout.gestion_eventos);
-        Bundle extras=getIntent().getExtras();
-        if (extras!=null){
-            user=extras.getString("user");
+
+        // Obtener extras del Intent
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            user = extras.getString("user");
         }
+
+        // Ejecutar la tarea asincrónica para extraer eventos
         new extraerEventos().execute();
+
+        // Ajustar los márgenes para respetar las barras del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.gestionEventos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-    private void init(){
-        listaEventos=findViewById(R.id.listaEventos);
+
+    // Método para inicializar la lista de eventos
+    private void init() {
+        listaEventos = findViewById(R.id.listaEventos);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrDatos);
         listaEventos.setAdapter(adapter);
     }
+
+    // Método para volver al menú anterior
     public void volver(View view) {
         Intent intent = new Intent(this, ControladorMenuAdmin.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -65,27 +77,33 @@ public class ControladorGestionEventos extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Método para insertar un nuevo evento
     public void insertarEvento(View view) {
         Intent intent = new Intent(this, agregarEventos.class);
         intent.putExtra("user", user);
         startActivity(intent);
     }
+
+    // Clase interna para extraer eventos de manera asincrónica
     private class extraerEventos extends AsyncTask<Void, Void, String> {
         ProgressDialog progreso;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Inicializar y mostrar el ProgressDialog
-            progreso= new ProgressDialog(ControladorGestionEventos.this);
+            progreso = new ProgressDialog(ControladorGestionEventos.this);
             progreso.setMessage("Cargando datos...");
             progreso.show();
         }
+
         @Override
         protected String doInBackground(Void... voids) {
             StringBuilder response = new StringBuilder();
             String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/extraerEventos.php";
 
             try {
+                // Establecer la conexión con el servidor
                 URL url = new URL(requestURL);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -115,34 +133,36 @@ public class ControladorGestionEventos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (!result.isEmpty()) {
-                // Primero separa por la / y luego por el guion
+                // Procesar los datos recibidos y actualizar la lista de eventos
                 String[] EventosArray = result.split("/");
                 for (String EventoStr : EventosArray) {
                     String[] datos = EventoStr.split(" - ");
                     int id = Integer.parseInt(datos[0]);
                     String nombre = datos[1];
-                    String descripcion=datos[2];
+                    String descripcion = datos[2];
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     Date fecha = null;
                     try {
-                        fecha=dateFormat.parse(datos[3]);
+                        fecha = dateFormat.parse(datos[3]);
                     } catch (ParseException e) {
                         Toast.makeText(ControladorGestionEventos.this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
                     }
-                    String ubicacion=datos[4];
-                    String localidad=datos[5];
-                    //int id,String nombre, String descripcion, String localidad, String ubicacion, Date fecha
-                    Evento e=new Evento(id, nombre, descripcion, localidad, ubicacion, fecha);
+                    String ubicacion = datos[4];
+                    String localidad = datos[5];
+                    Evento e = new Evento(id, nombre, descripcion, localidad, ubicacion, fecha);
                     arrayEventos.add(e);
+
                     String pattern = "dd/MM/yyyy";
                     @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
-                    arrDatos.add(nombre+" - "+df.format(fecha));
+                    arrDatos.add(nombre + " - " + df.format(fecha));
                 }
                 init();
                 progreso.dismiss();
+
+                // Configurar el listener para los items de la lista
                 listaEventos.setOnItemClickListener((parent, view, position, id1) -> {
-                    Evento ev =arrayEventos.get(position);
-                    Intent i=new Intent(ControladorGestionEventos.this, ControladorDatosEventos.class);
+                    Evento ev = arrayEventos.get(position);
+                    Intent i = new Intent(ControladorGestionEventos.this, ControladorDatosEventos.class);
                     i.putExtra("user", user);
                     i.putExtra("evento", ev);
                     i.putExtra("admin", true);
@@ -154,3 +174,4 @@ public class ControladorGestionEventos extends AppCompatActivity {
         }
     }
 }
+

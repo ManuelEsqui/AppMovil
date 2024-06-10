@@ -37,31 +37,37 @@ import java.util.ArrayList;
 
 public class ControladorEdicionDatos extends AppCompatActivity {
 
-    String user;
-    Usuario usuarioEditar;
+    String user; // Almacena el nombre de usuario
+    String userAux;
+    Usuario usuarioEditar; // Almacena el objeto Usuario a editar
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Habilitar el modo EdgeToEdge
         EdgeToEdge.enable(this);
         setContentView(R.layout.editar_datos_usuarios);
+        // Obtener los extras del Intent
         Bundle extras=getIntent().getExtras();
         if (extras!=null){
-            user=extras.getString("user");
-            usuarioEditar=(Usuario) extras.get("usuarioEditar");
+            user=extras.getString("user");// Obtener el nombre de usuario
+            userAux=extras.getString("usuAdmin");// Obtener el nombre de usuario y lo almacena en una variable auxiliar
+            usuarioEditar=(Usuario) extras.get("usuarioEditar");// Obtener el usuario a editar
         }
         try {
-            initComp();
+            initComp();// Inicializar componentes
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        // Configurar insets de ventana para la vista principal
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edicionDatos), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
+    // Declaración de componentes de la interfaz de usuario
     EditText txtnombre;
     EditText txtapellidos;
     EditText txtedad;
@@ -75,7 +81,9 @@ public class ControladorEdicionDatos extends AppCompatActivity {
     Usuario usuario;
     TextView txtSaludo;
     int localidad_id;
+    // Método para inicializar los componentes de la interfaz
     private void initComp() throws IOException {
+        // Inicializar componentes de la interfaz
         localidades=new ArrayList<>();
         txtSaludo=findViewById(R.id.textViewPrincipal);
         txtnombre=findViewById(R.id.txtNombre);
@@ -87,16 +95,19 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         txtcontrasena=findViewById(R.id.txtContraseña);
         spLocalidades=findViewById(R.id.spinner);
         admin=findViewById(R.id.admin);
+        // Configuración de visibilidad y saludo para el usuario a editar
         if(usuarioEditar==null){
             admin.setVisibility(View.INVISIBLE);
         }else {
             txtSaludo.setText("Edita a "+usuarioEditar.getNombre());
             this.user=usuarioEditar.getUser();
         }
+        // Ejecutar tarea asíncrona para obtener localidades
         new SacarLocalidades().execute();
     }
-
+    // Método para volver a la ventana de usuarios
     public void deleteAccount(View view) {
+        // Método para eliminar una cuenta de usuario
         new DeleteUsuarioAsyncTask().execute();
     }
 
@@ -104,6 +115,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         finish();
     }
 
+    // Clase AsyncTask para obtener localidades desde el servidor
     @SuppressLint("StaticFieldLeak")
     private class SacarLocalidades extends AsyncTask<Void, Void, String> {
         @Override
@@ -158,6 +170,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
             }
         }
     }
+    //metodo para cargar los datos del spinner
     private void cargarDatosSpinner() {
         ArrayList <String> nombreLoc=new ArrayList<>();
         for(Localidad l:localidades){
@@ -167,7 +180,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
                 com.google.android.material.R.layout.support_simple_spinner_dropdown_item, nombreLoc);
         spLocalidades.setAdapter(adapter);
     }
-
+// metodo para rellenar los campos de los usuarios
     private void rellenarCampos() {
         txtnombre.setText(usuario.getNombre());
         txtapellidos.setText(usuario.getApellidos());
@@ -190,6 +203,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
     }
 
+    //método que comprueba que los datos esten rellenenos y haga una consulta para editarlos
     public void editDatos(View vista) throws IOException {
         String nombre=txtnombre.getText().toString();
         String apellidos=txtapellidos.getText().toString();
@@ -216,6 +230,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         }
         new editarPersona().execute(nombre, apellidos, edad+"", sexo, estadoCivil, usuario, contrasena, localidad.getId()+"");
     }
+    //metodo para editar la persona en una tarea asincrona
     @SuppressLint("StaticFieldLeak")
     private class editarPersona extends AsyncTask<String, Void, String> {
 
@@ -271,6 +286,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
             finish();
         }
     }
+    //Extraer los datos de la persona
     private class SacarPersonas extends AsyncTask<Void, Void, String> {
         ProgressDialog progreso;
         @Override
@@ -313,6 +329,7 @@ public class ControladorEdicionDatos extends AppCompatActivity {
 
             return response.toString();
         }
+        //Se obtiene el objeto en json y se transforma en un objeto de la clase usuario
         @Override
         protected void onPostExecute(String result) {
             System.out.println(result);
@@ -390,7 +407,10 @@ public class ControladorEdicionDatos extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (usuarioEditar!=null) {
-                finish();
+                Intent intent = new Intent(ControladorEdicionDatos.this, ControladorListaUsuarios.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("user", userAux);
+                startActivity(intent);
             }else{
                 Toast.makeText(ControladorEdicionDatos.this, result, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ControladorEdicionDatos.this, LogIn.class);

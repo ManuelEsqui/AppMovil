@@ -26,17 +26,26 @@ import java.util.ArrayList;
 
 public class ControladorListaUsuarios extends AppCompatActivity {
 
-    ArrayList<Usuario> arrayUsuarios=new ArrayList<>();
-    ArrayList<String> stringArrayList=new ArrayList<>();
+    // ArrayList para almacenar objetos Usuario y cadenas de texto
+    ArrayList<Usuario> arrayUsuarios = new ArrayList<>();
+    ArrayList<String> stringArrayList = new ArrayList<>();
     ListView listaUsuarios;
+    String user;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.lista_usuarios);
-        new ObtenerUsuariosAsyncTask().execute();
+        EdgeToEdge.enable(this); // Habilitar la funcionalidad EdgeToEdge
+        setContentView(R.layout.lista_usuarios); // Establecer el diseño de la actividad
+        Bundle extras=getIntent().getExtras(); // Obtener los extras pasados a la actividad
+        if (extras!=null){ // Verificar si existen extras
+            user=extras.getString("user"); // Obtener el nombre de usuario
+            System.out.println(user);
+        }
+        new ObtenerUsuariosAsyncTask().execute(); // Ejecutar tarea asincrónica para obtener usuarios
+
+        // Ajustar los márgenes para respetar las barras del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.ventanaListaUsuarios), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -44,19 +53,25 @@ public class ControladorListaUsuarios extends AppCompatActivity {
         });
     }
 
+    // Método para volver al menú de administrador
     public void volverMenuAdmin(View view) {
-        finish();
+        Intent intent = new Intent(this, ControladorMenuAdmin.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("user", user);
+        startActivity(intent); // Finalizar la actividad
     }
+
+    // Clase interna para obtener usuarios de manera asincrónica
     private class ObtenerUsuariosAsyncTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
-            String requestURL = "http://"+ constantes.LOCALHOST+"/extreventos/obtenerPersonas.php";
+            String requestURL = "http://" + constantes.LOCALHOST + "/extreventos/obtenerPersonas.php";
             StringBuilder response = new StringBuilder();
 
             try {
+                // Establecer conexión con el servidor
                 URL url = new URL(requestURL);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
 
@@ -83,34 +98,38 @@ public class ControladorListaUsuarios extends AppCompatActivity {
 
             return response.toString();
         }
+
         @Override
         protected void onPostExecute(String content) {
             if (!content.isEmpty()) {
-                // Primero separa por la / y luego por el guion
+                // Separar los datos de usuario obtenidos y actualizar los ArrayLists
                 String[] PersonasArray = content.split("/");
                 for (String PersonaStr : PersonasArray) {
                     String[] datos = PersonaStr.split(" - ");
-                    Usuario u=new Usuario(datos[0], datos[1], datos[2]);
-                    String nombresConcat="Nombre: "+datos[0]+" "+datos[1]+"\nUsuario: "+datos[2]+"\n";
+                    Usuario u = new Usuario(datos[0], datos[1], datos[2]);
+                    String nombresConcat = "Nombre: " + datos[0] + " " + datos[1] + "\nUsuario: " + datos[2] + "\n";
                     arrayUsuarios.add(u);
                     stringArrayList.add(nombresConcat);
                 }
-                initDatos();
+                initDatos(); // Inicializar la visualización de datos
+                // Configurar el listener para los items de la lista
                 listaUsuarios.setOnItemClickListener((parent, view, position, id) -> {
-                    Usuario u =arrayUsuarios.get(position);
-                    Intent intent=new Intent(ControladorListaUsuarios.this, ControladorEdicionDatos.class);
+                    Usuario u = arrayUsuarios.get(position);
+                    Intent intent = new Intent(ControladorListaUsuarios.this, ControladorEdicionDatos.class);
                     intent.putExtra("usuarioEditar", u);
+                    intent.putExtra("usuAdmin", user);
                     startActivity(intent);
                 });
             }
         }
-
-
     }
+
+    // Método para inicializar la visualización de datos en el ListView
     private void initDatos() {
-        listaUsuarios=findViewById(R.id.listaUsuarios);
-        // Adaptador para llenar el ListView
+        listaUsuarios = findViewById(R.id.listaUsuarios);
+        // Adaptador para llenar el ListView con las cadenas de texto
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, stringArrayList);
         listaUsuarios.setAdapter(adapter);
     }
 }
+

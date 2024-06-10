@@ -37,78 +37,101 @@ import java.util.Calendar;
 
 public class ControladorEditEvento extends AppCompatActivity {
 
+    // Variables para almacenar el usuario y los detalles del evento
     String user;
     Evento_Gratis eventoGratis;
     Evento_Pago eventoPago;
+
+    // Componentes de la interfaz de usuario
     TextView textViewDate;
     Button buttonSelectDate;
     Spinner spLocalidades;
     TextInputLayout lyprecio, lypuntoventa, lydescripcionadicional, lytipo;
     EditText txtnombre, txtdescripcion, txtubicacion, txtprecio, txttipo, txtdescripcionAdicional, txtpuntoDeVenta;
-    ArrayList <Localidad> localidades=new ArrayList<>();
+
+    // Lista de localidades
+    ArrayList<Localidad> localidades = new ArrayList<>();
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.edit_evento);
-        Bundle extras=getIntent().getExtras();
-        if (extras!=null){
-            user=extras.getString("user");
-            eventoPago= (Evento_Pago) extras.get("eventoPago");
-            eventoGratis=(Evento_Gratis)  extras.get("eventoGratis");
+
+        // Obtiene los extras del intent
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            user = extras.getString("user");
+            eventoPago = (Evento_Pago) extras.get("eventoPago");
+            eventoGratis = (Evento_Gratis) extras.get("eventoGratis");
         }
         init();
+
+        // Configuración de insets para el layout principal
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.editEvento), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
     }
-    private void init(){
-        lypuntoventa=findViewById(R.id.lypuntoVenta);//ver
-        lyprecio=findViewById(R.id.lypresio);
-        lytipo=findViewById(R.id.lytipo);
-        lydescripcionadicional=findViewById(R.id.ly2x);
-        textViewDate = findViewById(R.id.textview_date2);
-        spLocalidades=findViewById(R.id.spLocalidades);
+
+    private void init() {
+        // Inicialización de los componentes de la interfaz de usuario
+        lypuntoventa = findViewById(R.id.lypuntoVenta); // Punto de venta
+        lyprecio = findViewById(R.id.lypresio); // Precio
+        lytipo = findViewById(R.id.lytipo); // Tipo de evento
+        lydescripcionadicional = findViewById(R.id.ly2x); // Descripción adicional
+        textViewDate = findViewById(R.id.textview_date2); // Fecha
+        spLocalidades = findViewById(R.id.spLocalidades); // Spinner de localidades
+
+        // Carga las localidades de forma asíncrona
         new SacarLocalidades().execute();
-        buttonSelectDate=findViewById(R.id.button_select_date);
+
+        buttonSelectDate = findViewById(R.id.button_select_date); // Botón para seleccionar fecha
         buttonSelectDate.setOnClickListener(v -> showDatePickerDialog());
-        txtnombre=findViewById(R.id.txtnombre);
-        txtdescripcion=findViewById(R.id.txtDescripcion2);
-        txtubicacion=findViewById(R.id.txtUbicacion2);
-        txtprecio=findViewById(R.id.txtPrecio2);
-        txttipo=findViewById(R.id.txtTipo2);
-        txtdescripcionAdicional=findViewById(R.id.txtDescripcionAdicional2);
-        txtpuntoDeVenta=findViewById(R.id.txtPuntoVenta2);
-        if (eventoGratis==null){
+
+        // Inicialización de campos de texto
+        txtnombre = findViewById(R.id.txtnombre);
+        txtdescripcion = findViewById(R.id.txtDescripcion2);
+        txtubicacion = findViewById(R.id.txtUbicacion2);
+        txtprecio = findViewById(R.id.txtPrecio2);
+        txttipo = findViewById(R.id.txtTipo2);
+        txtdescripcionAdicional = findViewById(R.id.txtDescripcionAdicional2);
+        txtpuntoDeVenta = findViewById(R.id.txtPuntoVenta2);
+
+        // Verifica si es un evento gratuito o de pago y llena los campos correspondientes
+        if (eventoGratis == null) {
             rellenarCamposEvPago();
-        } else if (eventoPago==null) {
+        } else if (eventoPago == null) {
             rellenarCamposEvGratis();
-        }else{
+        } else {
             System.out.println("Paranoyaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         }
-
-
     }
 
     private void rellenarCamposEvGratis() {
+        // Oculta campos específicos para eventos gratuitos
         lyprecio.setVisibility(View.INVISIBLE);
         lypuntoventa.setVisibility(View.INVISIBLE);
+
+        // Rellena los campos con los datos del evento gratuito
         txtnombre.setText(eventoGratis.getNombre());
         txttipo.setText(eventoGratis.getTipo());
         txtdescripcion.setText(eventoGratis.getDescripcion());
         txtubicacion.setText(eventoGratis.getUbicacion());
         txtdescripcionAdicional.setText(eventoGratis.getDescripcionAdicional());
+
+        // Formatea y establece la fecha
         String pattern = "yyyy-MM-dd";
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
-        String fecha=df.format(eventoGratis.getFecha());
+        String fecha = df.format(eventoGratis.getFecha());
         textViewDate.setText(fecha);
-        //textViewDate.setText(eventoGratis.getFecha().toString());
-        int i=0;
-        for (Localidad l : localidades){
-            if (l.getNombre().equals(eventoGratis.getLocalidad())){
+
+        // Establece la localidad en el spinner
+        int i = 0;
+        for (Localidad l : localidades) {
+            if (l.getNombre().equals(eventoGratis.getLocalidad())) {
                 spLocalidades.setSelection(i);
             }
             i++;
@@ -116,20 +139,27 @@ public class ControladorEditEvento extends AppCompatActivity {
     }
 
     private void rellenarCamposEvPago() {
+        // Oculta campos específicos para eventos de pago
         lydescripcionadicional.setVisibility(View.INVISIBLE);
         lytipo.setVisibility(View.INVISIBLE);
+
+        // Rellena los campos con los datos del evento de pago
         txtnombre.setText(eventoPago.getNombre());
         txtdescripcion.setText(eventoPago.getDescripcion());
         txtubicacion.setText(eventoPago.getUbicacion());
-        txtprecio.setText(eventoPago.getPrecio()+"");
+        txtprecio.setText(eventoPago.getPrecio() + "");
         txtpuntoDeVenta.setText(eventoPago.getPuntoDeVenta());
-        int i=0;
-        for (Localidad l : localidades){
-            if (l.getNombre().equals(eventoPago.getLocalidad())){
+
+        // Establece la localidad en el spinner
+        int i = 0;
+        for (Localidad l : localidades) {
+            if (l.getNombre().equals(eventoPago.getLocalidad())) {
                 spLocalidades.setSelection(i);
             }
             i++;
         }
+
+        // Formatea y establece la fecha
         String pattern = "yyyy-MM-dd";
         @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat(pattern);
         String fecha=df.format(eventoPago.getFecha());
@@ -244,7 +274,7 @@ public class ControladorEditEvento extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (!result.isEmpty()) {
-                // Parse the response and update localidades
+                // Parsea la respuesta y obtiene los datos de las localidades
                 String[] localidadesArray = result.split("/");
                 for (String localidadStr : localidadesArray) {
                     String[] idNombre = localidadStr.split("-");
@@ -254,7 +284,7 @@ public class ControladorEditEvento extends AppCompatActivity {
                     localidades.add(localidad);
                 }
 
-                // Update the spinner on the UI thread
+                // actualiza el spinner
                 cargarDatosSpinner();
             } else {
                 Toast.makeText(ControladorEditEvento.this, "Error loading localidades", Toast.LENGTH_LONG).show();
@@ -356,6 +386,7 @@ public class ControladorEditEvento extends AppCompatActivity {
 
             return response.toString();
         }
+        //Muestra el resultado y cambia de ventana
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(ControladorEditEvento.this, result, Toast.LENGTH_SHORT).show();
