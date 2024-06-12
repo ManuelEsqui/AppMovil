@@ -1,3 +1,4 @@
+//Manuel Esquivel Sevillano
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
@@ -171,7 +172,7 @@ public class agregarEventos extends AppCompatActivity {
                 Toast.makeText(this, "El precio debe ser un numero", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!puntoVenta.isEmpty() || fecha != null) {
+            if (!puntoVenta.isEmpty() && fecha != null) {
                 new insertarEventoPagoTask().execute(nombre, descripcion, ubicacion, localidad.getId() + "", precio + "", puntoVenta);
             } else {
                 Toast.makeText(this, "Tienes que escribir el lugar donde se vende la entrada o fecha", Toast.LENGTH_SHORT).show();
