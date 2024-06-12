@@ -2,6 +2,7 @@
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -108,8 +109,23 @@ public class ControladorEdicionDatos extends AppCompatActivity {
     }
     // Método para volver a la ventana de usuarios
     public void deleteAccount(View view) {
-        // Método para eliminar una cuenta de usuario
-        new DeleteUsuarioAsyncTask().execute();
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmación");
+        builder.setMessage("¿Estás seguro de que deseas eliminar esta cuenta?");
+
+        // Botón Aceptar
+        builder.setPositiveButton("Aceptar", (dialog, which) -> {
+            // Método para eliminar una cuenta de usuario
+            new DeleteUsuarioAsyncTask().execute();
+        });
+
+        // Botón Cancelar
+        builder.setNegativeButton("Cancelar", (dialog, which) -> Toast.makeText(this, "Opción cancelada", Toast.LENGTH_SHORT).show());
+
+        // Crear y mostrar el diálogo
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void volverVentanaUsuarios(View view) {

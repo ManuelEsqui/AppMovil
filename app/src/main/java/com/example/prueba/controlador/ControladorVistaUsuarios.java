@@ -112,7 +112,24 @@ public class ControladorVistaUsuarios extends AppCompatActivity {
             startActivity(i);
             return true;
         }else if (id == R.id.menu6) {
-            onBackPressed();
+            // Crear el AlertDialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Confirmación");
+            builder.setMessage("¿Estás seguro de que deseas salir de tu cuenta?");
+
+            // Botón Aceptar
+            builder.setPositiveButton("Aceptar", (dialog, which) -> {
+                //Toast.makeText(getActivity(), "Opción aceptada", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            });
+
+            // Botón Cancelar
+            builder.setNegativeButton("Cancelar", (dialog, which) -> Toast.makeText(ControladorVistaUsuarios.this, "Opción cancelada", Toast.LENGTH_SHORT).show());
+
+            // Crear y mostrar el diálogo
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -2,6 +2,7 @@
 package com.example.prueba.controlador;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -81,8 +82,24 @@ public class ControladorMenuAdmin extends AppCompatActivity {
 
     // Método para cerrar sesión y volver al inicio de sesión
     public void cerrarSesion(View view) {
-        Intent intent = new Intent(this, LogIn.class); // Crear intent para la actividad de inicio de sesión
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Establecer banderas para iniciar una nueva tarea y borrar la pila de actividades
-        startActivity(intent); // Iniciar la actividad de inicio de sesión
+        // Crear el AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirmación");
+        builder.setMessage("¿Estás seguro de que deseas salir de tu cuenta?");
+
+        // Botón Aceptar
+        builder.setPositiveButton("Aceptar", (dialog, which) -> {
+            Intent intent = new Intent(this, LogIn.class); // Crear intent para la actividad de inicio de sesión
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Establecer banderas para iniciar una nueva tarea y borrar la pila de actividades
+            startActivity(intent); // Iniciar la actividad de inicio de sesión
+        });
+
+        // Botón Cancelar
+        builder.setNegativeButton("Cancelar", (dialog, which) -> Toast.makeText(this, "Opción cancelada", Toast.LENGTH_SHORT).show());
+
+        // Crear y mostrar el diálogo
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 }
